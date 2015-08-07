@@ -1,6 +1,6 @@
 (ns small.kdtree)
 
-;; k-d tree
+;; K-d tree
 
 (defn make-tree
   ([dims points]
