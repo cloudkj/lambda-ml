@@ -6,6 +6,10 @@
   []
   (vector))
 
+(defn get-tail
+  [queue]
+  (peek queue))
+
 (defn make-item
   [value priority]
   (vector priority value))
@@ -23,8 +27,15 @@
    (insert queue value priority Integer/MAX_VALUE))
   ([queue value priority bound]
    (let [full (>= (count queue) bound)]
-     (if (and full (>= priority (item-priority (peek queue))))
+     (cond
+       ;; Empty queue
+       (empty? queue)
+       (vector (make-item value priority))
+       ;; Full queue and item priority is too high
+       (and full (>= priority (item-priority (get-tail queue))))
        queue
+       :else
+       ;; Find position and insert item
        (let [index (loop [lo 0
                           hi (count queue)]
                      (if (>= lo hi)
