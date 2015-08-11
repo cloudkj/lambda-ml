@@ -2,6 +2,7 @@
   (:require [clojure.test :refer :all]
             [clojure.set :refer :all]
             [small.knn :refer :all]
+            [small.kdtree :as kd]
             [small.pqueue :as pq]))
 
 (deftest test-knn
@@ -32,3 +33,29 @@
            (-> (knn 2 ((map-invert points) :Berkeley)) second pq/item-value points)))
     (is (= :MountainView
            (-> (knn 2 ((map-invert points) :PaloAlto)) second pq/item-value points)))))
+
+(deftest test-search
+  (let [points {:SanFrancisco [37.759859 -122.437134]
+                :Berkeley     [37.864012 -122.277832]
+                :PaloAlto     [37.444335 -122.156982]
+                :MountainView [37.387617 -122.060852]
+                :SanJose      [37.330857 -121.887817]
+                :SantaCruz    [36.971838 -122.019653]}
+        locations (map-invert points)
+        tree (kd/make-tree 2 (vals points))]
+    (is (= (set (map locations (search 1 (points :MountainView) tree)))
+           #{:MountainView}))
+    (is (= (set (map locations (search 2 (points :MountainView) tree)))
+           #{:MountainView}))
+    (is (= (set (map locations (search 4 (points :MountainView) tree)))
+           #{:MountainView}))
+    (is (= (set (map locations (search 8 (points :MountainView) tree)))
+           #{:MountainView :PaloAlto}))
+    (is (= (set (map locations (search 16 (points :MountainView) tree)))
+           #{:MountainView :PaloAlto :SanJose}))
+    (is (= (set (map locations (search 30 (points :MountainView) tree)))
+           #{:MountainView :PaloAlto :SanJose :SantaCruz}))
+    (is (= (set (map locations (search 35 (points :MountainView) tree)))
+           #{:MountainView :PaloAlto :SanJose :SantaCruz :SanFrancisco}))
+    (is (= (set (map locations (search 50 (points :MountainView) tree)))
+           #{:MountainView :PaloAlto :SanJose :SantaCruz :SanFrancisco :Berkeley}))))

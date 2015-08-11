@@ -1,16 +1,9 @@
 (ns small.knn
-  (:require [small.kdtree :as kd]
+  (:require [small.distance :as d]
+            [small.kdtree :as kd]
             [small.pqueue :as pq]))
 
 ;; K-nearest neighbors
-
-(defn euclidean
-  "Returns the Euclidean distance between two points. Assumes that both points
-  are represented as sequences of the same dimension."
-  [a b]
-  (->> (map - a b)
-       (map #(* % %))
-       (reduce +)))
 
 (defn make-knn
   [points]
@@ -26,17 +19,40 @@
        (if (nil? tree)
          cand
          (let [[node left right] ((juxt kd/get-value kd/get-left kd/get-right) tree)
-               dim (fn [p] (nth p (mod depth dims)))
+               dim (mod depth dims)
                ;; Determine near and far branches
-               delta (- (dim query) (dim node))
-               [near far] (if (<= delta 0) [left right] [right left])
+               [near far] (if (<= (nth query dim) (nth node dim)) [left right] [right left])
                cand (->>
                      ;; Try to add current node to candidates
-                     (pq/insert cand node (euclidean query node) k)
+                     (pq/insert cand node (d/euclidean query node) k)
                      ;; Explore near branch
                      (knn k query near (inc depth)))]
            ;; Optionally, explore far branch
            (if (or (< (count cand) k)
-                   (< (* delta delta) (pq/item-priority (pq/get-tail cand))))
+                   (< (d/euclidean query node dim) (pq/item-priority (pq/get-tail cand))))
              (knn k query far (inc depth) cand)
              cand)))))))
+
+;; Proximity search
+
+(defn search
+  "Returns a sequence of all points in the tree that are within a given distance
+  of the query point."
+  ([dist query tree]
+   (search dist query tree 0 (list)))
+  ([dist query tree depth cand]
+   (if (nil? tree)
+     cand
+     (let [[node left right] ((juxt kd/get-value kd/get-left kd/get-right) tree)
+           dim (mod depth (count node))
+           [near far] (if (<= (nth query dim) (nth node dim)) [left right] [right left])]
+       (cond->> cand
+         ;; Add current node if it's within proximity
+         (< (d/haversine query node) dist)
+         (cons node)
+         ;; Explore near branch
+         true
+         (search dist query near (inc depth))
+         ;; Optionally, explore far branch
+         (< (d/haversine query node dim) dist)
+         (search dist query far (inc depth)))))))
