@@ -2,11 +2,12 @@
   (:require [clojure.test :refer :all]
             [clojure.set :refer :all]
             [small.neighborhood :refer :all]
+            [small.distance :as d]
             [small.kdtree :as kd]
             [small.pqueue :as pq]))
 
 (deftest test-knn
-  (let [knn (make-knn [[2 3] [5 4] [9 6] [4 7] [8 1] [7 2]])]
+  (let [knn (make-knn d/euclidean [[2 3] [5 4] [9 6] [4 7] [8 1] [7 2]])]
     (is (= [7 2] (pq/item-value (second (knn 2 [8 1])))))
     (is (= [5 4] (pq/item-value (second (knn 2 [2 3])))))
     (is (= [8 1] (pq/item-value (second (knn 2 [7 2])))))
@@ -16,7 +17,7 @@
     (is (= 6 (count (knn 9 [2 3]))))))
 
 (deftest test-knn2
-  (let [knn (make-knn [[1 11] [2 5] [4 8] [6 4] [5 0] [7 9] [8 2]])]
+  (let [knn (make-knn d/euclidean [[1 11] [2 5] [4 8] [6 4] [5 0] [7 9] [8 2]])]
     (is (= [4 8] (pq/item-value (first (knn 5 [3 9])))))))
 
 (deftest test-knn3
@@ -25,7 +26,7 @@
                 [-12.2 12.2]   3
                 [38.3  38.3]   4
                 [79.99 179.99] 5}
-        knn (make-knn (keys points))]
+        knn (make-knn d/euclidean (keys points))]
     (is (= (list 1 2 3 4)
            (map (comp points second) (knn 4 ((map-invert points) 1)))))
     (is (= (list 2 1 3 4)
@@ -48,7 +49,7 @@
                 [0.910157297130659 0.437962722965556] 8
                 [0.847975159955406 0.169625495659256] 9
                 [0.793504465072615 0.121750314432942] 10}
-        knn (make-knn (keys points))]
+        knn (make-knn d/euclidean (keys points))]
     (is (= (list 1 2 3 5)
            (map (comp points second) (knn 4 ((map-invert points) 1)))))
     (is (= (list 2 1 5 3)
@@ -77,7 +78,7 @@
                 [37.444335 -122.156982] :PaloAlto,
                 [37.387617 -122.060852] :MountainView,
                 [37.759859 -122.437134] :SanFrancisco}
-        knn (make-knn (keys points))]
+        knn (make-knn d/euclidean (keys points))]
     (is (= :SanJose
            (-> (knn 2 ((map-invert points) :SantaCruz)) second pq/item-value points)))
     (is (= :SanFrancisco
@@ -93,7 +94,7 @@
                 :SanJose      [37.330857 -121.887817]
                 :SantaCruz    [36.971838 -122.019653]}
         locations (map-invert points)
-        search (make-search (vals points))]
+        search (make-search d/haversine (vals points))]
     (is (= (set (map locations (search 1 (points :MountainView))))
            #{:MountainView}))
     (is (= (set (map locations (search 2 (points :MountainView))))
