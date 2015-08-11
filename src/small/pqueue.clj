@@ -16,11 +16,11 @@
 
 (defn item-priority
   [item]
-  (first item))
+  (nth item 0))
 
 (defn item-value
   [item]
-  (second item))
+  (nth item 1))
 
 (defn insert
   ([queue value priority]

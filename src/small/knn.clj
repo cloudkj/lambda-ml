@@ -5,18 +5,20 @@
 ;; K-nearest neighbors
 
 (defn euclidean
-  [dims a b]
-  (reduce (fn [dist dim]
-            (let [d (- (nth a dim) (nth b dim))]
-              (+ dist (* d d))))
-          0
-          (range dims)))
+  "Returns the Euclidean distance between two points. Assumes that both points
+  are represented as sequences of the same dimension."
+  [a b]
+  (->> (map - a b)
+       (map #(* % %))
+       (reduce +)))
 
 (defn make-knn
-  [dims points]
+  [points]
   "Returns a function that, given k and a query point, returns a priority queue
-  of the k nearest neighboring points."
-  (let [t (kd/make-tree dims points)]
+  of the k nearest neighboring points. Assumes that all points are represented
+  as sequences of the same dimension."
+  (let [dims (count (first points))
+        t (kd/make-tree dims points)]
     (fn knn
       ([k query]
        (knn k query t 0 (pq/make-queue)))
@@ -30,7 +32,7 @@
                [near far] (if (<= delta 0) [left right] [right left])
                cand (->>
                      ;; Try to add current node to candidates
-                     (pq/insert cand node (euclidean dims query node) k)
+                     (pq/insert cand node (euclidean query node) k)
                      ;; Explore near branch
                      (knn k query near (inc depth)))]
            ;; Optionally, explore far branch
