@@ -1,4 +1,4 @@
-(ns small.knn
+(ns small.neighborhood
   (:require [small.distance :as d]
             [small.kdtree :as kd]
             [small.pqueue :as pq]))

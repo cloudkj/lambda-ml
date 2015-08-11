@@ -1,7 +1,7 @@
-(ns small.knn-test
+(ns small.neighborhood-test
   (:require [clojure.test :refer :all]
             [clojure.set :refer :all]
-            [small.knn :refer :all]
+            [small.neighborhood :refer :all]
             [small.kdtree :as kd]
             [small.pqueue :as pq]))
 
