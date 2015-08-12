@@ -7,6 +7,18 @@ expressiveness and enjoyment.
 
 ## Usage
 
+## Contents
+
+### Data Structures
+
+* K-d tree
+* Priority queue
+
+### Algorithms
+
+* DBSCAN
+* K-nearest neighbors
+
 ## License
 
 Copyright © 2015
