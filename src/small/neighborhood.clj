@@ -1,6 +1,5 @@
 (ns small.neighborhood
-  (:require [small.distance :as d]
-            [small.kdtree :as kd]
+  (:require [small.kdtree :as kd]
             [small.pqueue :as pq]))
 
 ;; K-nearest neighbors
@@ -54,7 +53,7 @@
                [near far] (if (<= (nth query dim) (nth node dim)) [left right] [right left])]
            (cond->> cand
              ;; Add current node if it's within proximity
-             (< (f query node) dist)
+             (<= (f query node) dist)
              (cons node)
              ;; Explore near branch
              true
