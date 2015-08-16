@@ -18,6 +18,7 @@ expressiveness and enjoyment.
 
 * DBSCAN
 * K-nearest neighbors
+* Linear regression
 
 ## License
 
