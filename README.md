@@ -1,4 +1,4 @@
-# Small
+# Small Machine Learning Library
 
 A **s**mall **ma**chine **l**earning **l**ibrary aimed at providing simple,
 concise implementations of machine learning techniques and utilities. It is
@@ -19,6 +19,7 @@ expressiveness and enjoyment.
 * DBSCAN
 * K-nearest neighbors
 * Linear regression
+* Logistic regression
 
 ## License
 
