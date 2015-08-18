@@ -9,6 +9,8 @@
   [z]
   (/ 1 (+ 1 (expt Math/E (- z)))))
 
+(def vector-with-intercept (comp vec (partial cons 1.0)))
+
 (defn gradient-descent-step
   "Performs a single gradient step on the model coefficients."
   [h x y theta alpha]
@@ -41,49 +43,13 @@
               cost (j x y theta)]
           (recur (inc i) theta (conj costs cost)))))))
 
-;; Linear regression
-
-(defn make-linear-regression
-  "Returns a linear regression model with the given parameters."
-  [alpha iters]
-  (let [h dot-product]
-    {:alpha alpha
-     :iterations iters
-     :hypothesis h
-     :cost (fn [x y theta]
-             (let [m (count y)]
-               (/ (apply + (map (fn [xi yi]
-                                  (expt (- (h xi theta) yi) 2))
-                                x y))
-                  (* 2 m))))}))
-
-;; Logistic regression
-
-(defn make-logistic-regression
-  "Returns a logistic regression model with the given parameters."
-  [alpha iters]
-  (let [h (comp sigmoid dot-product)]
-    {:alpha alpha
-     :iterations iters
-     :hypothesis h
-     :cost (fn [x y theta]
-             (let [m (count y)]
-               (/ (apply + (map (fn [xi yi]
-                                  (let [hi (h xi theta)]
-                                    (+ (* yi
-                                          (Math/log hi))
-                                       (* (- 1 yi)
-                                          (Math/log (- 1 hi))))))
-                                x y))
-                  (- m))))}))
-
 (defn regression-fit
   "Fits a regression model to the given training data."
   ([model data]
    (regression-fit model (map butlast data) (map peek data)))
   ([model x y]
    (let [{alpha :alpha iters :iterations h :hypothesis j :cost} model
-         x+intercepts (map (comp vec (partial cons 1)) x)
+         x+intercepts (map vector-with-intercept x)
          [theta costs] (gradient-descent h j x+intercepts y alpha iters)]
      (-> model
          (assoc :parameters theta)
@@ -95,5 +61,53 @@
   (let [{theta :parameters h :hypothesis} model]
     (when (not (nil? theta))
       (->> x
-           (map (comp vec (partial cons 1.0)))
+           (map vector-with-intercept)
            (map (partial h theta))))))
+
+;; Linear regression
+
+(defn linear-regression-hypothesis
+  [xi theta]
+  (dot-product xi theta))
+
+(defn linear-regression-cost
+  [x y theta]
+  (let [m (count y)]
+    (/ (apply + (map (fn [xi yi]
+                       (expt (- (linear-regression-hypothesis xi theta) yi) 2))
+                     x y))
+       (* 2 m))))
+
+(defn make-linear-regression
+  "Returns a linear regression model with the given parameters."
+  [alpha iters]
+  {:alpha alpha
+   :iterations iters
+   :hypothesis linear-regression-hypothesis
+   :cost linear-regression-cost})
+
+;; Logistic regression
+
+(defn logistic-regression-hypothesis
+  [xi theta]
+  (sigmoid (dot-product xi theta)))
+
+(defn logistic-regression-cost
+  [x y theta]
+  (let [m (count y)]
+    (/ (apply + (map (fn [xi yi]
+                       (let [hi (logistic-regression-hypothesis xi theta)]
+                         (+ (* yi
+                               (Math/log hi))
+                            (* (- 1 yi)
+                               (Math/log (- 1 hi))))))
+                     x y))
+       (- m))))
+
+(defn make-logistic-regression
+  "Returns a logistic regression model with the given parameters."
+  [alpha iters]
+  {:alpha alpha
+   :iterations iters
+   :hypothesis logistic-regression-hypothesis
+   :cost logistic-regression-cost})
