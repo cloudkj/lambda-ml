@@ -9,17 +9,18 @@ expressiveness and enjoyment.
 
 ## Contents
 
-### Data Structures
-
-* K-d tree
-* Priority queue
-
 ### Algorithms
 
 * DBSCAN
 * K-nearest neighbors
 * Linear regression
 * Logistic regression
+* Naive Bayes
+
+### Data Structures
+
+* K-d tree
+* Priority queue
 
 ## License
 
