@@ -12,6 +12,7 @@ expressiveness and enjoyment.
 ### Algorithms
 
 * DBSCAN
+* K-means
 * K-nearest neighbors
 * Linear regression
 * Logistic regression
