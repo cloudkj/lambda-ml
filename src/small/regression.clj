@@ -46,7 +46,7 @@
 (defn regression-fit
   "Fits a regression model to the given training data."
   ([model data]
-   (regression-fit model (map butlast data) (map peek data)))
+   (regression-fit model (map butlast data) (map last data)))
   ([model x y]
    (let [{alpha :alpha iters :iterations h :hypothesis j :cost} model
          x+intercepts (map vector-with-intercept x)
