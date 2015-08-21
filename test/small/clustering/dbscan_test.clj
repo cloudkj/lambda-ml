@@ -1,8 +1,7 @@
-(ns small.clustering-test
+(ns small.clustering.dbscan-test
   (:require [clojure.test :refer :all]
             [clojure.set :refer :all]
-            [clojure.pprint]
-            [small.clustering :refer :all]
+            [small.clustering.dbscan :refer :all]
             [small.distance :as d]))
 
 (deftest test-dbscan
