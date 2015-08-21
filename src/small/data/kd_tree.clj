@@ -1,4 +1,4 @@
-(ns small.kd-tree)
+(ns small.data.kd-tree)
 
 ;; K-d tree
 

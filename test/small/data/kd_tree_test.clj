@@ -1,6 +1,6 @@
-(ns small.kd-tree-test
+(ns small.data.kd-tree-test
   (:require [clojure.test :refer :all]
-            [small.kd-tree :refer :all]))
+            [small.data.kd-tree :refer :all]))
 
 (deftest test-kd-tree
   (let [tree (make-tree 2 [[2 3] [5 4] [9 6] [4 7] [8 1] [7 2]])]

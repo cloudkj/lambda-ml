@@ -3,8 +3,8 @@
             [clojure.set :refer :all]
             [small.neighborhood :refer :all]
             [small.distance :as d]
-            [small.kd-tree :as kd]
-            [small.priority-queue :as pq]))
+            [small.data.kd-tree :as kd]
+            [small.data.priority-queue :as pq]))
 
 (deftest test-knn
   (let [knn (make-knn d/euclidean [[2 3] [5 4] [9 6] [4 7] [8 1] [7 2]])]

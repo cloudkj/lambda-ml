@@ -1,4 +1,4 @@
-(ns small.priority-queue)
+(ns small.data.priority-queue)
 
 ;; Priority queue (bounded and unbounded)
 

@@ -1,6 +1,6 @@
 (ns small.neighborhood
-  (:require [small.kd-tree :as kd]
-            [small.priority-queue :as pq]))
+  (:require [small.data.kd-tree :as kd]
+            [small.data.priority-queue :as pq]))
 
 ;; K-nearest neighbors
 
