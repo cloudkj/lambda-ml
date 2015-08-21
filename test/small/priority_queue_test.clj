@@ -1,8 +1,8 @@
-(ns small.pqueue-test
+(ns small.priority-queue-test
   (:require [clojure.test :refer :all]
-            [small.pqueue :refer :all]))
+            [small.priority-queue :refer :all]))
 
-(deftest test-pqueue
+(deftest test-priority-queue
   (let [queue (-> (make-queue)
                   (insert :e 4.6)
                   (insert :d 3.2)
@@ -14,7 +14,7 @@
     (is (= (map item-value (insert queue :f 0.4))
            [:a :b :f :c :d :e]))))
 
-(deftest test-pqueue-bounded
+(deftest test-priority-queue-bounded
   (let [bound 5
         queue (-> (make-queue)
                   (insert :e 4.6)
