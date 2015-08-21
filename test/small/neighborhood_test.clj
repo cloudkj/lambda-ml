@@ -3,7 +3,7 @@
             [clojure.set :refer :all]
             [small.neighborhood :refer :all]
             [small.distance :as d]
-            [small.kdtree :as kd]
+            [small.kd-tree :as kd]
             [small.pqueue :as pq]))
 
 (deftest test-knn
