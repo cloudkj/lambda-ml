@@ -1,6 +1,6 @@
-(ns small.data.priority-queue-test
+(ns lambda-ml.data.priority-queue-test
   (:require [clojure.test :refer :all]
-            [small.data.priority-queue :refer :all]))
+            [lambda-ml.data.priority-queue :refer :all]))
 
 (deftest test-priority-queue
   (let [queue (-> (make-queue)

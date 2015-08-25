@@ -1,4 +1,4 @@
-(ns small.distance)
+(ns lambda-ml.distance)
 
 (defn euclidean
   "Returns the Euclidean distance (squared) between two points. Assumes that

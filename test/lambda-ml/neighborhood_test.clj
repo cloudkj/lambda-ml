@@ -1,10 +1,10 @@
-(ns small.neighborhood-test
+(ns lambda-ml.neighborhood-test
   (:require [clojure.test :refer :all]
             [clojure.set :refer :all]
-            [small.neighborhood :refer :all]
-            [small.distance :as d]
-            [small.data.kd-tree :as kd]
-            [small.data.priority-queue :as pq]))
+            [lambda-ml.neighborhood :refer :all]
+            [lambda-ml.distance :as d]
+            [lambda-ml.data.kd-tree :as kd]
+            [lambda-ml.data.priority-queue :as pq]))
 
 (deftest test-knn
   (let [knn (make-knn d/euclidean [[2 3] [5 4] [9 6] [4 7] [8 1] [7 2]])]

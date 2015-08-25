@@ -1,8 +1,8 @@
-(ns small.clustering.dbscan-test
+(ns lambda-ml.clustering.dbscan-test
   (:require [clojure.test :refer :all]
             [clojure.set :refer :all]
-            [small.clustering.dbscan :refer :all]
-            [small.distance :as d]))
+            [lambda-ml.clustering.dbscan :refer :all]
+            [lambda-ml.distance :as d]))
 
 (deftest test-dbscan
   (let [points [[2 10]

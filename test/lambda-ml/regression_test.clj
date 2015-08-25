@@ -1,6 +1,6 @@
-(ns small.regression-test
+(ns lambda-ml.regression-test
   (:require [clojure.test :refer :all]
-            [small.regression :refer :all]))
+            [lambda-ml.regression :refer :all]))
 
 (deftest test-linear-regression
   (let [data [[-2 -1]

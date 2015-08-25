@@ -1,6 +1,6 @@
-(ns small.distance-test
+(ns lambda-ml.distance-test
   (:require [clojure.test :refer :all]
-            [small.distance :refer :all]))
+            [lambda-ml.distance :refer :all]))
 
 (deftest test-euclidean
   (is (= 25 (euclidean [2 -1]    [-2 2])))

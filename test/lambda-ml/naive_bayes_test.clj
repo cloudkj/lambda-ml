@@ -1,6 +1,6 @@
-(ns small.naive-bayes-test
+(ns lambda-ml.naive-bayes-test
   (:require [clojure.test :refer :all]
-            [small.naive-bayes :refer :all]))
+            [lambda-ml.naive-bayes :refer :all]))
 
 (deftest test-naive-bayes
   (let [data [[:male   6.00 180 12]

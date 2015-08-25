@@ -1,4 +1,4 @@
-(ns small.core)
+(ns lambda-ml.core)
 
 (defn random-sample
   "Returns n randomly selected elements, without replacement, from coll."

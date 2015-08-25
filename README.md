@@ -1,9 +1,9 @@
-# Small Machine Learning Library
+# lambda-ml: a small machine learning library
 
-A **s**mall **ma**chine **l**earning **l**ibrary aimed at providing simple,
-concise implementations of machine learning techniques and utilities. It is
-written in Lisp (using the implementation du jour, Clojure) to maximize
-expressiveness and enjoyment.
+A small machine learning library aimed at providing simple, concise
+implementations of machine learning techniques and utilities. It is written in
+Lisp (using the implementation du jour, Clojure) to maximize expressiveness and
+enjoyment.
 
 ## Usage
 

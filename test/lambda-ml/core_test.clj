@@ -1,6 +1,6 @@
-(ns small.core-test
+(ns lambda-ml.core-test
   (:require [clojure.test :refer :all]
-            [small.core :refer :all]))
+            [lambda-ml.core :refer :all]))
 
 (deftest test-random-sample
   (doseq [k (range 5 11)]

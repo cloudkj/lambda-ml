@@ -1,4 +1,4 @@
-(ns small.regression
+(ns lambda-ml.regression
   (require [clojure.math.numeric-tower :refer :all]))
 
 (defn dot-product

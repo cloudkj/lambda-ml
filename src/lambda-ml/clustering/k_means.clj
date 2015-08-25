@@ -1,6 +1,6 @@
-(ns small.clustering.k-means
-  (:require [small.core :as c]
-            [small.distance :as d]))
+(ns lambda-ml.clustering.k-means
+  (:require [lambda-ml.core :as c]
+            [lambda-ml.distance :as d]))
 
 (defn assign-clusters
   "Returns cluster assignments based on the closest centroid to each point."

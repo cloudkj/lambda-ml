@@ -1,4 +1,4 @@
-(ns small.data.priority-queue)
+(ns lambda-ml.data.priority-queue)
 
 ;; Priority queue (bounded and unbounded)
 

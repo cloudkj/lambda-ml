@@ -1,6 +1,6 @@
-(ns small.clustering.dbscan
+(ns lambda-ml.clustering.dbscan
   (:require [clojure.set :as set]
-            [small.neighborhood :as n]))
+            [lambda-ml.neighborhood :as n]))
 
 (defn dbscan
   "Returns a clustering of points represented as a map from cluster id to a set

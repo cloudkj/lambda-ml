@@ -1,4 +1,4 @@
-(ns small.naive-bayes
+(ns lambda-ml.naive-bayes
   (require [clojure.math.numeric-tower :refer :all]))
 
 ;; Naive Bayes
