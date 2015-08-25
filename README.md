@@ -1,4 +1,4 @@
-# lambda-ml: a small machine learning library
+# lambda-ml
 
 A small machine learning library aimed at providing simple, concise
 implementations of machine learning techniques and utilities. It is written in
