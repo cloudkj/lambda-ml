@@ -26,16 +26,14 @@
               (map #(/ % (count (clusters index))))))
        (range k)))
 
+(defn k-means-seq
+  [k points centroids]
+  (lazy-seq (let [clusters (assign-clusters centroids points)]
+              (cons clusters
+                    (k-means-seq k points (update-centroids k clusters))))))
+
 (defn k-means
-  "Returns a clustering of points represented as a map from cluster id to a
-  collection of points."
-  [k points iters]
-  (loop [i 0
-         mu (c/random-sample points k)
-         clusters {}]
-    (if (>= i iters)
-      clusters
-      (let [clusters (assign-clusters mu points)]
-        (recur (inc i)
-               (update-centroids k clusters)
-               clusters)))))
+  "Returns a lazy sequence of clustering of points represented as a map from
+  cluster id to a collection of points, at each iteration of k-means."
+  [k points]
+  (k-means-seq k points (c/random-sample points k)))
