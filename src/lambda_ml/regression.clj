@@ -13,7 +13,7 @@
 
 (defn gradient-descent-step
   "Performs a single gradient step on the model coefficients."
-  [h x y theta alpha]
+  [h x y alpha theta]
   (let [m (count y)
         n+1 (count (first x))
         ;; Compute gradients
@@ -27,21 +27,18 @@
     (map (fn [t g] (- t (* alpha g))) theta gradients)))
 
 (defn gradient-descent
-  "Returns an estimate of the model coefficients along with the cost at each
-  iteration. Takes a hypothesis function h, which returns a predicted value
-  given an example and parameters, and a cost function j, which computes the
-  cost of applying the current model on all training examples."
-  [h j x y alpha iters]
-  (let [m (count y)
-        n+1 (count (first x))]
-    (loop [i 0
-           theta (repeatedly n+1 rand)
-           costs []]
-      (if (>= i iters)
-        [theta costs]
-        (let [theta (gradient-descent-step h x y theta alpha)
-              cost (j x y theta)]
-          (recur (inc i) theta (conj costs cost)))))))
+  "Returns a lazy sequence of estimates of the model coefficients, along with
+  the cost, at each iteration of gradient descent. Takes a hypothesis function
+  h, which returns a predicted value given an example and parameters, and a cost
+  function j, which computes the cost of applying the current model on all
+  training examples."
+  ([h j x y alpha]
+   (let [n+1 (count (first x))]
+     (gradient-descent h j x y alpha (repeatedly n+1 rand))))
+  ([h j x y alpha theta]
+   (lazy-seq (let [theta (gradient-descent-step h x y alpha theta)
+                   cost (j x y theta)]
+               (cons [theta cost] (gradient-descent h j x y alpha theta))))))
 
 (defn regression-fit
   "Fits a regression model to the given training data."
@@ -50,10 +47,11 @@
   ([model x y]
    (let [{alpha :alpha iters :iterations h :hypothesis j :cost} model
          x+intercepts (map vector-with-intercept x)
-         [theta costs] (gradient-descent h j x+intercepts y alpha iters)]
+         estimates (gradient-descent h j x+intercepts y alpha)
+         [theta cost] (nth estimates iters)]
      (-> model
          (assoc :parameters theta)
-         (assoc :costs costs)))))
+         (assoc :costs (map second (take iters estimates)))))))
 
 (defn regression-predict
   "Predicts the values of example data using a regression model."
