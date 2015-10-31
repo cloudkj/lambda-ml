@@ -30,6 +30,17 @@ enjoyment.
     (nth (k-means k [[1 1] [1.5 2] [3 4] [5 7] [3.5 5] [4.5 5] [3.5 4.5]]) iters)
     ;;=> {0 ([3.5 4.5] [4.5 5] [3.5 5] [5 7] [3 4]), 1 ([1.5 2] [1 1])}
 
+### K-nearest neighbors
+
+    (ns example
+     (:require [lambda-ml.neighborhood :refer :all]
+               [lambda-ml.distance :refer :all]))
+
+    (def knn (make-knn euclidean [[2 3] [5 4] [9 6] [4 7] [8 1] [7 2]]))
+
+    (knn 3 [8 1])
+    ;;=> [[0 [8 1]] [2 [7 2]] [18 [5 4]]]
+
 ## Contents
 
 ### Algorithms
