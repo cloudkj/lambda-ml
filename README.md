@@ -41,6 +41,17 @@ enjoyment.
     (knn 3 [8 1])
     ;;=> [[0 [8 1]] [2 [7 2]] [18 [5 4]]]
 
+### Linear regression
+
+    (ns example
+     (:require [lambda-ml.regression :refer :all]))
+
+    (def model (make-linear-regression 0.01 5000))
+    (def fit (regression-fit model [[-2 -1] [1 1] [3 2]]))
+
+    (fit :parameters)
+    ;;=> (0.26315789473683826 0.6052631578947385)
+
 ## Contents
 
 ### Algorithms
