@@ -1,6 +1,6 @@
 (ns lambda-ml.examples.kaggle.titanic
-  (require [clojure.data.csv :as csv]
-           [lambda-ml.regression :refer :all]))
+  (require [lambda-ml.regression :refer :all]
+           [clojure.data.csv :as csv]))
 
 (defn convert
   [s]

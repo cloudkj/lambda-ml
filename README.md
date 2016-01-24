@@ -52,6 +52,19 @@ enjoyment.
     (fit :parameters)
     ;;=> (0.26315789473683826 0.6052631578947385)
 
+### Logistic regression
+
+### Naive Bayes
+
+    (ns example
+     (:require [lambda-ml.naive-bayes :refer :all]))
+
+    (def model (naive-bayes-fit [[6.0 180 12] [5.92 190 11] [5.58 170 12] [5.92 165 10] [5.0 100 6] [5.5 150 8] [5.42 130 7] [5.75 150 9]]
+                                [:male :male :male :male :female :female :female :female]))
+
+    (naive-bayes-predict model [[6.0 130 8]])
+    ;;=> (:female)
+
 ## Contents
 
 ### Algorithms
