@@ -3,7 +3,9 @@
   :url "http://github.com/cloudkj/lambda-ml"
   :license {:name "MIT License"
             :url "http://opensource.org/licenses/MIT"}
-  :plugins [[lein-gorilla "0.3.6"]]
+  :plugins [[lein-exec "0.3.6"]
+            [lein-gorilla "0.3.6"]]
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/data.csv "0.1.3"]
-                 [org.clojure/math.numeric-tower "0.0.4"]])
+                 [org.clojure/math.numeric-tower "0.0.4"]
+                 [gorilla-plot "0.1.4"]])
