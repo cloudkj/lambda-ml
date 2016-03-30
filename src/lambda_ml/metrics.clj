@@ -1,5 +1,21 @@
 (ns lambda-ml.metrics)
 
+(defn auc
+  "Returns the area under the curve of a given collection of points, using the
+  trapezoidal rule. Assumes that the points are ordered in a monotonically
+  increasing manner."
+  [points]
+  (loop [area 0
+         [x0 y0] (first points)
+         points (rest points)]
+    (if (empty? points)
+      area
+      (let [[x1 y1] (first points)
+            dx (- x1 x0)]
+        (recur (+ area (* dx (/ (+ y1 y0) 2)))
+               [x1 y1]
+               (rest points))))))
+
 (defn roc-curve
   "Returns a sequence of [false positive rate, true positive rate] tuples that
   represent the ROC curve of a classifier."
