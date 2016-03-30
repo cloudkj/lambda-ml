@@ -1,5 +1,12 @@
 (ns lambda-ml.core)
 
+(defn random-partition
+  "Returns n partitions of elements randomly selected from coll."
+  [n coll]
+  (let [size (quot (count coll) n)
+        coll (shuffle coll)]
+    (partition size size [] coll)))
+
 (defn random-sample
   "Returns n randomly selected elements, without replacement, from coll."
   ([coll n]
