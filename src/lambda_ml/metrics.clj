@@ -2,8 +2,7 @@
 
 (defn auc
   "Returns the area under the curve of a given collection of points, using the
-  trapezoidal rule. Assumes that the points are ordered in a monotonically
-  increasing manner."
+  trapezoidal rule."
   [points]
   (loop [area 0
          [x0 y0] (first points)
