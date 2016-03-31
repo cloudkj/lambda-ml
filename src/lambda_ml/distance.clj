@@ -1,4 +1,17 @@
-(ns lambda-ml.distance)
+(ns lambda-ml.distance
+  (:require [lambda-ml.core :as c]))
+
+(defn cosine
+  "Returns the cosine distance between two points by subtracting the cosine
+  similarity from one. Assumes that both points are represented as sequences of
+  the same dimension. Given a dimension d, returns the distance between two
+  points as if the values for all other dimensions were set to zero."
+  ([x y]
+   (- 1 (/ (c/dot-product x y)
+           (* (Math/sqrt (c/dot-product x x))
+              (Math/sqrt (c/dot-product y y))))))
+  ([x y d]
+   (cosine (vector (nth x d)) (vector (nth y d)))))
 
 (defn euclidean
   "Returns the Euclidean distance (squared) between two points. Assumes that

@@ -1,13 +1,6 @@
 (ns lambda-ml.regression
-  (require [clojure.math.numeric-tower :refer :all]))
-
-(defn dot-product
-  [a b]
-  (apply + (map * a b)))
-
-(defn sigmoid
-  [z]
-  (/ 1 (+ 1 (expt Math/E (- z)))))
+  (:require [lambda-ml.core :as c]
+            [clojure.math.numeric-tower :refer :all]))
 
 (def vector-with-intercept (comp vec (partial cons 1.0)))
 
@@ -66,7 +59,7 @@
 
 (defn linear-regression-hypothesis
   [xi theta]
-  (dot-product xi theta))
+  (c/dot-product xi theta))
 
 (defn linear-regression-cost
   [x y theta]
@@ -88,7 +81,7 @@
 
 (defn logistic-regression-hypothesis
   [xi theta]
-  (sigmoid (dot-product xi theta)))
+  (c/sigmoid (c/dot-product xi theta)))
 
 (defn logistic-regression-cost
   [x y theta]

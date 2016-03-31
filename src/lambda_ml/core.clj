@@ -1,4 +1,13 @@
-(ns lambda-ml.core)
+(ns lambda-ml.core
+  (:require [clojure.math.numeric-tower :refer :all]))
+
+(defn dot-product
+  [a b]
+  (reduce + (map * a b)))
+
+(defn sigmoid
+  [z]
+  (/ 1 (+ 1 (expt Math/E (- z)))))
 
 (defn random-partition
   "Returns n partitions of elements randomly selected from coll."

@@ -2,6 +2,14 @@
   (:require [clojure.test :refer :all]
             [lambda-ml.distance :refer :all]))
 
+(deftest test-cosine
+  (is (< (Math/abs (- (cosine [1 2 0] [0 4 1])
+                      0.132278))
+         1E-6)
+  (is (< (Math/abs (- (cosine [0 3 4 5] [7 6 3 1])
+                      0.492167))
+         1E-6))))
+
 (deftest test-euclidean
   (is (= 25 (euclidean [2 -1]    [-2 2])))
   (is (= 95 (euclidean [0 3 4 5] [7 6 3 -1]))))
