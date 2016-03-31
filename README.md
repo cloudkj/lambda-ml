@@ -22,12 +22,13 @@ enjoyment.
 ### K-means
 
     (ns example
-     (:require [lambda-ml.clustering.k-means :refer :all]))
+     (:require [lambda-ml.clustering.k-means :refer :all]
+               [lambda-ml.distance :refer :all]))
     
     (def k 2)
     (def iters 100)
     
-    (nth (k-means k [[1 1] [1.5 2] [3 4] [5 7] [3.5 5] [4.5 5] [3.5 4.5]]) iters)
+    (nth (k-means k euclidean [[1 1] [1.5 2] [3 4] [5 7] [3.5 5] [4.5 5] [3.5 4.5]]) iters)
     ;;=> {0 ([3.5 4.5] [4.5 5] [3.5 5] [5 7] [3 4]), 1 ([1.5 2] [1 1])}
 
 ### K-nearest neighbors

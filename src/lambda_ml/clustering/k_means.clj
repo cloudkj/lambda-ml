@@ -1,10 +1,9 @@
 (ns lambda-ml.clustering.k-means
-  (:require [lambda-ml.core :as c]
-            [lambda-ml.distance :as d]))
+  (:require [lambda-ml.core :as c]))
 
 (defn assign-clusters
   "Returns cluster assignments based on the closest centroid to each point."
-  [mu x]
+  [f mu x]
   (let [mu-indexed (map-indexed vector mu)]
     (loop [points x
            clusters {}]
@@ -12,7 +11,7 @@
         clusters
         (let [xi (first points)
               ;; Find the index of the closest centroid
-              index (first (apply min-key (comp (partial d/euclidean xi) second) mu-indexed))
+              index (first (apply min-key (comp (partial f xi) second) mu-indexed))
               cluster (or (clusters index) (list))]
           (recur (rest points)
                  (assoc clusters index (conj cluster xi))))))))
@@ -27,13 +26,14 @@
        (range k)))
 
 (defn k-means-seq
-  [k points centroids]
-  (lazy-seq (let [clusters (assign-clusters centroids points)]
+  [k f points centroids]
+  (lazy-seq (let [clusters (assign-clusters f centroids points)]
               (cons clusters
-                    (k-means-seq k points (update-centroids k clusters))))))
+                    (k-means-seq k f points (update-centroids k clusters))))))
 
 (defn k-means
-  "Returns a lazy sequence of clustering of points represented as a map from
-  cluster id to a collection of points, at each iteration of k-means."
-  [k points]
-  (k-means-seq k points (c/random-sample points k)))
+  "Returns a lazy sequence of a clustering of points using the distance function
+  f, represented as a map from cluster id to a collection of points, at each
+  iteration of k-means."
+  [k f points]
+  (k-means-seq k f points (c/random-sample points k)))
