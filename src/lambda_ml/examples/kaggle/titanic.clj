@@ -9,7 +9,7 @@
 ;; **
 
 ;; @@
-(ns lambda-ml.examples.kaggle.titanic.worksheet
+(ns lambda-ml.examples.kaggle.titanic
   (require [lambda-ml.core :refer :all]
            [lambda-ml.metrics :refer :all]
            [lambda-ml.regression :refer :all]
