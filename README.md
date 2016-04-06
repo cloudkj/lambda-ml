@@ -47,7 +47,7 @@ enjoyment.
     (ns example
      (:require [lambda-ml.regression :refer :all]))
 
-    (def model (make-linear-regression 0.01 5000))
+    (def model (make-linear-regression 0.01 0 5000))
     (def fit (regression-fit model [[-2 -1] [1 1] [3 2]]))
 
     (fit :parameters)
