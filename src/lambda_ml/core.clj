@@ -5,6 +5,10 @@
   [a b]
   (reduce + (map * a b)))
 
+(defn l2-norm
+  [a]
+  (sqrt (dot-product a a)))
+
 (defn sigmoid
   [z]
   (/ 1 (+ 1 (expt Math/E (- z)))))
