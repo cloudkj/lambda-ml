@@ -1,7 +1,11 @@
 ;; gorilla-repl.fileformat = 1
 
 ;; **
-;;; # Foo
+;;; # Lambda ML Example: Kaggle March Machine Learning Mania 2016
+;;; 
+;;; An example of using a couple different classification techniques on the data from the [March Machine Learning Mania 2016](https://www.kaggle.com/c/march-machine-learning-mania-2016) competition from Kaggle.
+;;; 
+;;; First, lets set up our namespace.
 ;; **
 
 ;; @@
@@ -199,7 +203,7 @@
   (float (/ (count (filter identity (map = (map last test-set) baseline-predictions)))
             (count test-set))))
 
-(def baseline-roc (roc-curve (map last test-set) baseline-predictions))
+;(def baseline-roc (roc-curve (map last test-set) baseline-predictions))
 
 (println "baseline accuracy =" baseline-accuracy)
 ;; @@
@@ -226,29 +230,29 @@
      ;hiseed loseed
      winner]))
 
-(def alpha 0.01)
-(def lambda 0.1)
-(def iters 1000)
-(def model (regression-fit (make-logistic-regression alpha lambda iters) (map encode-features training-set)))
-
-(model :parameters)
-;; @@
-;; =>
-;;; {"type":"list-like","open":"<span class='clj-lazy-seq'>(</span>","close":"<span class='clj-lazy-seq'>)</span>","separator":" ","items":[{"type":"html","content":"<span class='clj-double'>0.2863883644798515</span>","value":"0.2863883644798515"},{"type":"html","content":"<span class='clj-double'>0.1682624773818952</span>","value":"0.1682624773818952"},{"type":"html","content":"<span class='clj-double'>0.17721208508926406</span>","value":"0.17721208508926406"},{"type":"html","content":"<span class='clj-double'>-0.5217258622996755</span>","value":"-0.5217258622996755"},{"type":"html","content":"<span class='clj-double'>-0.46868653797720844</span>","value":"-0.46868653797720844"},{"type":"html","content":"<span class='clj-double'>-0.030497317361941514</span>","value":"-0.030497317361941514"},{"type":"html","content":"<span class='clj-double'>-0.05598093626419186</span>","value":"-0.05598093626419186"}],"value":"(0.2863883644798515 0.1682624773818952 0.17721208508926406 -0.5217258622996755 -0.46868653797720844 -0.030497317361941514 -0.05598093626419186)"}
-;; <=
-
-;; @@
-(def predictions (regression-predict model (map (comp butlast encode-features) test-set)))
+(def alpha 0.03)
+(def iters 2000)
 (def threshold 0.5)
 
-(def accuracy
-  (float (/ (count (filter identity (map = (map last test-set) (map #(if (<= % threshold) 0 1) predictions))))
-            (count test-set))))
-
-(println "accuracy =" accuracy)
+(doseq [lambda [0 0.1 1.0]]
+  (let [model (-> (make-logistic-regression alpha lambda iters)
+                  (regression-fit (map encode-features training-set)))
+        predictions (regression-predict model (map (comp butlast encode-features) test-set))
+        accuracy (float (/ (->> (map #(if (<= % threshold) 0 1) predictions)
+                                (map = (map last test-set))
+                                (filter identity)
+                                (count))
+                           (count test-set)))]
+    (println (l2-norm (:parameters model)))
+    (println "lambda =" lambda "accuracy =" accuracy)))
 ;; @@
 ;; ->
-;;; accuracy = 0.6865672
+;;; 1.0305776657954324
+;;; lambda = 0 accuracy = 0.6865672
+;;; 1.1177901240356887
+;;; lambda = 0.1 accuracy = 0.6865672
+;;; 0.8950107957597521
+;;; lambda = 1.0 accuracy = 0.6865672
 ;;; 
 ;; <-
 ;; =>
