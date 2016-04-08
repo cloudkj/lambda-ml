@@ -1,6 +1,8 @@
 (ns lambda-ml.core
   (:require [clojure.math.numeric-tower :refer :all]))
 
+(def vector-with-intercept (comp vec (partial cons 1.0)))
+
 (defn dot-product
   [a b]
   (reduce + (map * a b)))

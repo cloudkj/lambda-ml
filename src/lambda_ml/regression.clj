@@ -2,8 +2,6 @@
   (:require [lambda-ml.core :as c]
             [clojure.math.numeric-tower :refer :all]))
 
-(def vector-with-intercept (comp vec (partial cons 1.0)))
-
 (defn gradient-descent-step
   "Performs a single gradient step on the model coefficients."
   [h x y alpha lambda theta]
@@ -46,7 +44,7 @@
    (regression-fit model (map butlast data) (map last data)))
   ([model x y]
    (let [{alpha :alpha lambda :lambda iters :iterations h :hypothesis j :cost} model
-         x+intercepts (map vector-with-intercept x)
+         x+intercepts (map c/vector-with-intercept x)
          estimates (gradient-descent h j x+intercepts y alpha lambda)
          [theta cost] (nth estimates iters)]
      (-> model
@@ -59,7 +57,7 @@
   (let [{theta :parameters h :hypothesis} model]
     (when (not (nil? theta))
       (->> x
-           (map vector-with-intercept)
+           (map c/vector-with-intercept)
            (map (partial h theta))))))
 
 ;; Linear regression
