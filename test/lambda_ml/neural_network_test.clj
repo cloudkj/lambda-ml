@@ -34,3 +34,21 @@
 
 (deftest test-hidden-node-error
   (is (< (Math/abs (- -0.0194298 (hidden-node-error 0.53 [-0.4 0.2] [0.12 -0.15]))) 1E-6)))
+
+(deftest test-neural-network-gradient-descent-step
+  (let [weights [[[0.35 0.15 0.20]
+                  [0.35 0.25 0.30]]
+                 [[0.60 0.40 0.45]
+                  [0.60 0.50 0.55]]]
+        x [0.05 0.1]
+        y [0.01 0.99]
+        alpha 0.5
+        [w0 w1] (gradient-descent-step x y weights alpha)]
+    (is (< (Math/abs (- 0.149780716 (nth (nth w0 0) 1))) 1E-6))
+    (is (< (Math/abs (- 0.19956143  (nth (nth w0 0) 2))) 1E-6))
+    (is (< (Math/abs (- 0.24975114  (nth (nth w0 1) 1))) 1E-6))
+    (is (< (Math/abs (- 0.29950229  (nth (nth w0 1) 2))) 1E-6))
+    (is (< (Math/abs (- 0.35891648  (nth (nth w1 0) 1))) 1E-6))
+    (is (< (Math/abs (- 0.408666186 (nth (nth w1 0) 2))) 1E-6))
+    (is (< (Math/abs (- 0.51130127  (nth (nth w1 1) 1))) 1E-6))
+    (is (< (Math/abs (- 0.561370121 (nth (nth w1 1) 2))) 1E-6))))

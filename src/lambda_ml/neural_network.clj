@@ -2,8 +2,8 @@
   (:require [lambda-ml.core :as c]))
 
 (defn feed-forward
-  "Returns the activation values for nodes in a neural network after propagating
-  the input values given as x forward through the network."
+  "Returns the activation values for nodes in a neural network after forward
+  propagating the input values x through the network."
   [x theta]
   (loop [i 0
          activations []]
@@ -30,34 +30,54 @@
   (* a (- 1 a) (c/dot-product w d)))
 
 (defn back-propagate
+  "Returns the errors of each node in a neural network after propagating the
+  the errors at the output nodes, computed against target values y, backwards
+  through the network."
   [y theta activations]
   (loop [i (dec (count theta))
-         deltas []]
+         errors []]
     (if (< i 0)
-      deltas
-      (let [ai (nth activations i)
-            d (if (= i (dec (count theta)))
-                (map output-node-error ai y)
-                (map-indexed (fn [j a]
-                               (let [weights (map #(nth % (inc j)) (nth theta (inc i)))]
-                                 (hidden-node-error a weights (first deltas))))
-                             ai))]
-        (recur (dec i) (cons d deltas))))))
+      errors
+      (let [ai (nth activations i) ;; activations at layer i
+            di+1 (first errors)    ;; errors at layer i + 1
+            deltas (if (= i (dec (count theta)))
+                     (map output-node-error ai y)
+                     (map-indexed (fn [j a]
+                                    ;; weights feeding out of node j in layer i
+                                    (let [weights (map #(nth % (inc j)) (nth theta (inc i)))]
+                                      (hidden-node-error a weights di+1)))
+                                  ai))]
+        (recur (dec i) (cons deltas errors))))))
 
-(defn gradient-step
-  [x theta alpha activations deltas]
+(defn compute-gradients
+  "Returns the gradients for each weight given activation values and errors."
+  [x theta alpha activations errors]
   (loop [i 0
          gradients []]
     (if (= i (count theta))
       gradients
-      (let [activations (if (= i 0) x (nth activations (dec i)))
-            deltas (nth deltas i)]
-        (recur (inc i)
-               (conj gradients
-                     (map-indexed (fn [j weights]
-                                    (map-indexed (fn [k w]
-                                                   (let [error (nth deltas j)
-                                                         output (if (= k 0) 1.0 (nth activations (dec k)))]
-                                                     (* alpha error output)))
-                                                 weights))
-                                  (nth theta i))))))))
+      (let [ei (nth errors i)
+            ;; x is used for the first layer since activations do not include input values
+            activations (if (= i 0) x (nth activations (dec i)))
+            ;; gradients for weights going from layer i to i + 1
+            g (map-indexed (fn [j weights]
+                             (map-indexed (fn [k w]
+                                            (let [error (nth ei j)
+                                                  output (if (= k 0)
+                                                           1.0 ;; bias output
+                                                           (nth activations (dec k)))]
+                                              (* alpha error output)))
+                                          weights))
+                           (nth theta i))]
+        (recur (inc i) (conj gradients g))))))
+
+(defn gradient-descent-step
+  [x y theta alpha]
+  (let [activations (feed-forward x theta)
+        errors (back-propagate y theta activations)
+        gradients (compute-gradients x theta alpha activations errors)]
+    (map (fn [ti gi]
+           (map (fn [w g] (map + w g))
+                ti gi))
+         theta
+         gradients)))
