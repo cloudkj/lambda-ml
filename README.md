@@ -70,6 +70,7 @@ enjoyment.
 
 ### Algorithms
 
+* Artificial neural networks
 * DBSCAN
 * K-means
 * K-nearest neighbors
