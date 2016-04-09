@@ -61,13 +61,11 @@
             activations (if (= i 0) x (nth activations (dec i)))
             ;; gradients for weights going from layer i to i + 1
             g (map-indexed (fn [j weights]
-                             (map-indexed (fn [k w]
-                                            (let [error (nth ei j)
-                                                  output (if (= k 0)
-                                                           1.0 ;; bias output
-                                                           (nth activations (dec k)))]
-                                              (* alpha error output)))
-                                          weights))
+                             (let [error (nth ei j)]
+                               (for [k (range (count weights))]
+                                 (if (= k 0)
+                                   (* alpha error) ;; output for bias node is constant
+                                   (* alpha error (nth activations (dec k)))))))
                            (nth theta i))]
         (recur (inc i) (conj gradients g))))))
 
