@@ -2,6 +2,8 @@
   (:require [lambda-ml.core :as c]))
 
 (defn feed-forward
+  "Returns the activation values for nodes in a neural network after propagating
+  the input values given as x forward through the network."
   [x theta]
   (loop [i 0
          activations []]
@@ -9,7 +11,8 @@
       activations
       (let [weights (nth theta i)
             input (if (= i 0) x (last activations))
-            output (map #(c/sigmoid (c/dot-product % (c/vector-with-intercept input))) weights)]
+            input+bias (c/vector-with-intercept input)
+            output (map #(c/sigmoid (c/dot-product % input+bias)) weights)]
         (recur (inc i) (conj activations output))))))
 
 (defn output-node-error
