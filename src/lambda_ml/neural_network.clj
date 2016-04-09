@@ -16,12 +16,18 @@
         (recur (inc i) (conj activations output))))))
 
 (defn output-node-error
-  [activation target]
-  (* (- target activation) activation (- 1 activation)))
+  "Returns the error of an output node, where a is the activation value of the
+  output node and t is the target value (label) of the node."
+  [a t]
+  (* (- t a) a (- 1 a)))
 
 (defn hidden-node-error
-  [activation weights deltas]
-  (* activation (- 1 activation) (c/dot-product weights deltas)))
+  "Returns the error of a hidden node, where a is the activation value of the
+  node, w is the weights feeding out of the node, and d is the errors of the
+  nodes in the next layer. Formally, for the kth node in the ith layer:
+  error_ik = a_ik * (1 - a_ik) * sum_{j in i+1} w_i+1,j * error_i+1,j"
+  [a w d]
+  (* a (- 1 a) (c/dot-product w d)))
 
 (defn back-propagate
   [y theta activations]
