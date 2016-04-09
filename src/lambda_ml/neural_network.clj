@@ -39,14 +39,16 @@
     (if (< i 0)
       errors
       (let [ai (nth activations i) ;; activations at layer i
-            di+1 (first errors)    ;; errors at layer i + 1
             deltas (if (= i (dec (count theta)))
+                     ;; output layer
                      (map output-node-error ai y)
-                     (map-indexed (fn [j a]
-                                    ;; weights feeding out of node j in layer i
-                                    (let [weights (map #(nth % (inc j)) (nth theta (inc i)))]
-                                      (hidden-node-error a weights di+1)))
-                                  ai))]
+                     ;; hidden layer(s)
+                     (let [di+1 (first errors)] ;; errors at layer i + 1
+                       (map-indexed (fn [j a]
+                                      ;; weights feeding out of node j in layer i
+                                      (let [weights (map #(nth % (inc j)) (nth theta (inc i)))]
+                                        (hidden-node-error a weights di+1)))
+                                    ai)))]
         (recur (dec i) (cons deltas errors))))))
 
 (defn compute-gradients
@@ -74,6 +76,8 @@
   (let [activations (feed-forward x theta)
         errors (back-propagate y theta activations)
         gradients (compute-gradients x theta alpha activations errors)]
+    ;; update weights with computed gradients
+    ;; TODO: can do update directly after gradient computation
     (map (fn [ti gi]
            (map (fn [w g] (map + w g))
                 ti gi))
