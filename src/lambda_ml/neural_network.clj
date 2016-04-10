@@ -3,7 +3,7 @@
 
 (defn feed-forward
   "Returns the activation values for nodes in a neural network after forward
-  propagating the input values x through the network."
+  propagating the values of a single input example x through the network."
   [x theta]
   (loop [i 0
          activations []]
@@ -31,8 +31,8 @@
 
 (defn back-propagate
   "Returns the errors of each node in a neural network after propagating the
-  the errors at the output nodes, computed against target values y, backwards
-  through the network."
+  the errors at the output nodes, computed against a single target value y,
+  backwards through the network."
   [y theta activations]
   (loop [i (dec (count theta))
          errors []]
@@ -52,7 +52,8 @@
         (recur (dec i) (cons deltas errors))))))
 
 (defn compute-gradients
-  "Returns the gradients for each weight given activation values and errors."
+  "Returns the gradients for each weight given activation values and errors on
+  a input values of a single example x."
   [x theta alpha activations errors]
   (loop [i 0
          gradients []]
@@ -72,6 +73,8 @@
         (recur (inc i) (conj gradients g))))))
 
 (defn gradient-descent-step
+  "Performs a single gradient step on the input and target values of a single
+  example x and label y, and returns the updated weights."
   [x y theta alpha]
   (let [activations (feed-forward x theta)
         errors (back-propagate y theta activations)
@@ -83,3 +86,63 @@
                 ti gi))
          theta
          gradients)))
+
+(defn gradient-descent
+  "Performs gradient descent on input and target values of all examples x and
+  y, and returns the updated weights."
+  [x y theta alpha]
+  (loop [inputs x
+         targets y
+         weights theta]
+    (if (and (empty? inputs) (empty? targets))
+      weights
+      (recur (rest inputs)
+             (rest targets)
+             (gradient-descent-step (first inputs)
+                                    (first targets)
+                                    weights
+                                    alpha)))))
+
+(defn neural-network-fit
+  "Trains a neural network model for the given training data. For new models,
+  parameters are initialized as random values from a normal distribution."
+  ([model data]
+   (neural-network-fit model (map butlast data) (map last data)))
+  ([model x y]
+   (let [{alpha :alpha layers :layers theta :parameters} model
+         theta (if (not (nil? theta))
+                 theta
+                 (let [r (java.util.Random.)
+                       rand (fn [] (.nextGaussian r))
+                       layers (concat [(count (first x))]   ;; number of input nodes
+                                      layers                ;; number of nodes at each hidden layer
+                                      [(count (first y))])] ;; number of output nodes
+                   ;; initialize random values as parameters
+                   (for [i (range (dec (count layers)))]
+                     (let [ni (inc (nth layers i))      ;; number of nodes at layer i (+ bias node)
+                           ni+1 (nth layers (inc i))]   ;; number of nodes at layer i+1
+                       (repeatedly ni+1 #(repeatedly ni rand))))))]
+     (assoc model :parameters (gradient-descent x y theta alpha)))))
+
+(defn neural-network-predict
+  "Predicts the values of example data using a neural network model."
+  [model x]
+  (let [{theta :parameters} model]
+    (when (not (nil? theta))
+      (map (fn [xi] (last (feed-forward xi theta))) x))))
+
+(defn neural-network-cost
+  [model x y]
+  (let [{theta :parameters} model]
+    (reduce + (map (fn [xi yi]
+                     (let [output (last (feed-forward xi theta))]
+                       (reduce + (map (comp #(* % %) -) output yi))))
+                   x y))))
+
+(defn make-neural-network
+  "Returns a neural network model where alpha is the learning rate and layers is
+  a sequence of numbers where the ith element is the number of nodes in the ith
+  hidden layer."
+  [layers alpha]
+  {:alpha alpha
+   :layers layers})

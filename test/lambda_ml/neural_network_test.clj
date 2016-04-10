@@ -35,7 +35,7 @@
 (deftest test-hidden-node-error
   (is (< (Math/abs (- -0.0194298 (hidden-node-error 0.53 [-0.4 0.2] [0.12 -0.15]))) 1E-6)))
 
-(deftest test-neural-network-gradient-descent-step
+(deftest test-gradient-descent-step
   (let [weights [[[0.35 0.15 0.20]
                   [0.35 0.25 0.30]]
                  [[0.60 0.40 0.45]
@@ -52,3 +52,19 @@
     (is (< (Math/abs (- 0.408666186 (nth (nth w1 0) 2))) 1E-6))
     (is (< (Math/abs (- 0.51130127  (nth (nth w1 1) 1))) 1E-6))
     (is (< (Math/abs (- 0.561370121 (nth (nth w1 1) 2))) 1E-6))))
+
+(deftest test-neural-network
+  (let [data [[0 0 [0]]
+              [0 1 [1]]
+              [1 0 [1]]
+              [1 1 [0]]]
+        model (loop [i 0
+                     model (make-neural-network [3] 0.5)]
+                (if (>= i 5000)
+                  model
+                  (recur (inc i) (neural-network-fit model data))))
+        predictions (map first (neural-network-predict model (map butlast data)))]
+    (is (> 0.1 (nth predictions 0)))
+    (is (< 0.9 (nth predictions 1)))
+    (is (< 0.9 (nth predictions 2)))
+    (is (> 0.1 (nth predictions 3)))))
