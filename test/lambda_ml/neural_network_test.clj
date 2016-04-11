@@ -58,12 +58,9 @@
               [0 1 [1]]
               [1 0 [1]]
               [1 1 [0]]]
-        model (loop [i 0
-                     model (make-neural-network [3] 0.5)]
-                (if (>= i 5000)
-                  model
-                  (recur (inc i) (neural-network-fit model data))))
-        predictions (map first (neural-network-predict model (map butlast data)))]
+        model (make-neural-network [3] 0.5)
+        fit (nth (iterate #(neural-network-fit % data) model) 5000)
+        predictions (map first (neural-network-predict fit (map butlast data)))]
     (is (> 0.1 (nth predictions 0)))
     (is (< 0.9 (nth predictions 1)))
     (is (< 0.9 (nth predictions 2)))
