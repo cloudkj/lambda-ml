@@ -14,7 +14,9 @@ enjoyment.
   (:require [lambda-ml.neural-network :refer :all]))
 
 (def data [[0 0 0] [0 1 1] [1 0 1] [1 1 0]])
-(def model (make-neural-network [3] 0.5))
+(def hidden-layers [3])
+(def alpha 0.5)
+(def model (make-neural-network hidden-layers alpha))
 
 (def fit
   (-> #(neural-network-fit % (map butlast data) (map (comp vector last) data))
