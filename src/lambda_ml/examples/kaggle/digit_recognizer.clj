@@ -17,7 +17,7 @@
   (let [x (mapv #(/ % 255.0) (rest example))
         y (-> (vec (replicate 10 0.0))
               (assoc (first example) 1.0))]
-    [x y]))
+    (conj x y)))
 
 (defn encode-test
   [example]
@@ -42,104 +42,66 @@
 ;; <=
 
 ;; @@
-(defn square [x] (* x x))
+(defn log [& more] (binding [*out* *err*] (apply println more)))
 
 (defn output->label
   [output]
   (first (apply max-key second (map-indexed vector output))))
 
 (defn accuracy
-  [weights examples]
-  (/ (reduce + (for [example examples]
-                 (let [[x y] example
-                       output (last (feed-forward x weights))
-                       prediction (output->label output)
-                       label (output->label y)]
-                   (if (= prediction label) 1 0))))
-     (count examples)))
+  [model validation]
+  (let [labels (map (comp output->label last) validation)
+        predictions (->> (map (comp vec butlast) validation)
+                         (neural-network-predict model)
+                         (map output->label))]
+    (float (/ (reduce + (map (fn [a b] (if (= a b) 1 0)) labels predictions))
+              (count validation)))))
 
-(defn error
-  [weights examples]
-  (reduce + (for [example examples]
-              (let [[x y] example
-                    output (last (feed-forward x weights))]
-                (->> (map (comp square -) output y)
-                     (reduce +))))))
-;; @@
-;; =>
-;;; {"type":"html","content":"<span class='clj-var'>#&#x27;lambda-ml.examples.kaggle.digit-recognizer/error</span>","value":"#'lambda-ml.examples.kaggle.digit-recognizer/error"}
-;; <=
+(def alpha 0.5)
+(def partitions 420)
+(def iterations 3)
 
-;; @@
-(require :reload 'lambda-ml.neural-network)
+(defn train-neural-network
+  [model data k]
+  (let [validation (random-sample data 100)]
+    (loop [partitions (partition (/ (count data) k) data)
+           model model]
+      (when (not (nil? (:parameters model)))
+        (log "partition" (- k (count partitions)) (neural-network-cost model validation)))
+      (if (empty? partitions)
+        model
+        (recur (rest partitions) (neural-network-fit model (first partitions)))))))
 
-;; Initial weights
-
-(def theta
-  (let [r (java.util.Random.)
-        rand (fn [] (.nextGaussian r))]
-    [(repeatedly 30 #(repeatedly (inc 784) rand))
-     (repeatedly 10 #(repeatedly (inc 30) rand))]))
-
-;; Parametrs and data
-
-(def alpha 0.4)
-(def train-set train-data)
-(def error-set (random-sample train-data 100))
-(def test-set (take-last 2000 train-data))
-(def step 100)
-
-(binding [*out* *err*] (println "initial accuracy:" (float (accuracy theta test-set))))
+(def validation (take-last 2000 train-data))
 
 (def nn
-  (loop [examples train-set
-         errors []
-         weights theta]
-    (if (empty? examples)
-      [weights errors]
-      (let [[x y] (first examples)]
-        (recur (rest examples)
-               (if (= (mod (count examples) step) 0)
-                 (let [i (- (count train-set) (count examples))
-                       e (error weights error-set)]
-                   (binding [*out* *err*] (println i e))
-                   (conj errors [i e]))
-                 errors)
-               (gradient-descent-step x y weights alpha))))))
+  (loop [iter 0
+         model (make-neural-network [30] alpha)]
+    (if (>= iter iterations)
+      model
+      (do
+        (log "iteration" iter "accuracy" (accuracy model validation))
+        (recur (inc iter) (train-neural-network model train-data partitions))))))
 
-(binding [*out* *err*] (println "final accuracy:" (float (accuracy (first nn) test-set))))
-;(plot/list-plot (second nn) :joined true :plot-range [:all [0 100]])
+(log "final accuracy" (accuracy nn validation))
 
 (println "ImageId,Label")
-(doseq [[id x] (map-indexed vector test-data)]
-  (let [output (last (feed-forward x (first nn)))
-        label (output->label output)]
-    (println (str (inc id) "," label))))
+(doseq [[id output] (map-indexed vector (neural-network-predict nn test-data))]
+  (println (str (inc id) "," (output->label output))))
 ;; @@
 ;; ->
-;;; initial accuracy: 0.1375
-;;; 0 423.5910841962969
-;;; 100 163.11651697951902
-;;; 200 116.6679767752302
-;;; 300 106.86560335092673
-;;; 400 104.5675599668178
-;;; 500 103.52783432947602
-;;; 600 101.78596875950088
-;;; 700 100.06152759644586
-;;; 800 98.59406334757537
-;;; 900 98.45093135119977
-;;; final accuracy: 0.225
-;;; ImageId,Label
-;;; 1,2
-;;; 2,4
-;;; 3,4
-;;; 4,4
-;;; 5,8
-;;; 6,5
-;;; 7,5
-;;; 8,8
-;;; 9,4
-;;; 10,8
+;;; iteration 0 accuracy 0.0
+;;; partition 1 96.06555535236717
+;;; partition 2 96.55620177132641
+;;; partition 3 91.65690495564674
+;;; partition 4 82.2989226407048
+;;; partition 5 78.27473520888623
+;;; partition 6 76.47333963939181
+;;; partition 7 74.17945178117628
+;;; partition 8 72.26439298285767
+;;; partition 9 69.57305954046464
+;;; partition 10 66.33840011587513
+;;; final accuracy 0.534
 ;;; 
 ;; <-
 ;; =>

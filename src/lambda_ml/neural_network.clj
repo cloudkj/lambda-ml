@@ -107,7 +107,7 @@
   "Trains a neural network model for the given training data. For new models,
   parameters are initialized as random values from a normal distribution."
   ([model data]
-   (neural-network-fit model (map butlast data) (map last data)))
+   (neural-network-fit model (map (comp vec butlast) data) (map (comp vec last) data)))
   ([model x y]
    (let [{alpha :alpha layers :layers theta :parameters} model
          theta (if (not (nil? theta))
@@ -132,12 +132,14 @@
       (map (fn [xi] (last (feed-forward xi theta))) x))))
 
 (defn neural-network-cost
-  [model x y]
-  (let [{theta :parameters} model]
-    (reduce + (map (fn [xi yi]
-                     (let [output (last (feed-forward xi theta))]
-                       (reduce + (map (comp #(* % %) -) output yi))))
-                   x y))))
+  ([model data]
+   (neural-network-cost model (map (comp vec butlast) data) (map (comp vec last) data)))
+  ([model x y]
+   (let [{theta :parameters} model]
+     (reduce + (map (fn [xi yi]
+                      (let [output (last (feed-forward xi theta))]
+                        (reduce + (map (comp #(* % %) -) output yi))))
+                    x y)))))
 
 (defn make-neural-network
   "Returns a neural network model where alpha is the learning rate and layers is
