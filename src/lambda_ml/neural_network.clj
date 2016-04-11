@@ -109,20 +109,23 @@
   ([model data]
    (neural-network-fit model (map (comp vec butlast) data) (map (comp vec last) data)))
   ([model x y]
-   (let [{alpha :alpha layers :layers theta :parameters} model
+   (let [{alpha :alpha hidden :hidden layers :layers theta :parameters} model
+         layers (if (not (nil? layers))
+                  layers
+                  (concat [(count (first x))]   ;; number of input nodes
+                          hidden                ;; number of nodes at each hidden layer
+                          [(count (first y))])) ;; number of output nodes
          theta (if (not (nil? theta))
                  theta
                  (let [r (java.util.Random.)
-                       rand (fn [] (.nextGaussian r))
-                       layers (concat [(count (first x))]   ;; number of input nodes
-                                      layers                ;; number of nodes at each hidden layer
-                                      [(count (first y))])] ;; number of output nodes
-                   ;; initialize random values as parameters
+                       rand (fn [] (.nextGaussian r))]
                    (for [i (range (dec (count layers)))]
-                     (let [ni (inc (nth layers i))      ;; number of nodes at layer i (+ bias node)
-                           ni+1 (nth layers (inc i))]   ;; number of nodes at layer i+1
-                       (repeatedly ni+1 #(repeatedly ni rand))))))]
-     (assoc model :parameters (gradient-descent x y theta alpha)))))
+                     (let [ni (inc (nth layers i))    ;; number of nodes at layer i (+ bias node)
+                           ni+1 (nth layers (inc i))] ;; number of nodes at layer i+1
+                       (repeatedly ni+1 #(repeatedly ni rand))))))] ;; initialize random values as parameters
+     (-> model
+         (assoc :layers layers)
+         (assoc :parameters (gradient-descent x y theta alpha))))))
 
 (defn neural-network-predict
   "Predicts the values of example data using a neural network model."
@@ -141,10 +144,20 @@
                         (reduce + (map (comp #(* % %) -) output yi))))
                     x y)))))
 
+(defn print-neural-network
+  "Prints information about a given neural network."
+  [model]
+  (println
+   (cond-> model
+     (contains? model :parameters)
+     (assoc :parameters (clojure.string/join " -> "
+                                             (for [thetai (:parameters model)]
+                                               (str (dec (count (first thetai))) " x " (count thetai))))))))
+
 (defn make-neural-network
-  "Returns a neural network model where alpha is the learning rate and layers is
+  "Returns a neural network model where alpha is the learning rate and hidden is
   a sequence of numbers where the ith element is the number of nodes in the ith
   hidden layer."
-  [layers alpha]
+  [hidden alpha]
   {:alpha alpha
-   :layers layers})
+   :hidden hidden})
