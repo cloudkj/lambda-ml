@@ -12,7 +12,7 @@
       (let [weights (nth theta i)
             input (if (= i 0) x (last activations))
             input+bias (c/vector-with-intercept input)
-            output (map #(c/sigmoid (c/dot-product % input+bias)) weights)]
+            output (mapv #(c/sigmoid (c/dot-product % input+bias)) weights)]
         (recur (inc i) (conj activations output))))))
 
 (defn output-node-error
@@ -35,20 +35,21 @@
   backwards through the network."
   [y theta activations]
   (loop [i (dec (count theta))
-         errors []]
+         errors (list)]
     (if (< i 0)
-      errors
+      (vec errors)
       (let [ai (nth activations i) ;; activations at layer i
             deltas (if (= i (dec (count theta)))
                      ;; output layer
-                     (map output-node-error ai y)
+                     (mapv output-node-error ai y)
                      ;; hidden layer(s)
                      (let [di+1 (first errors)] ;; errors at layer i + 1
-                       (map-indexed (fn [j a]
-                                      ;; weights feeding out of node j in layer i
-                                      (let [weights (map #(nth % (inc j)) (nth theta (inc i)))]
-                                        (hidden-node-error a weights di+1)))
-                                    ai)))]
+                       (vec
+                        (map-indexed (fn [j a]
+                                       ;; weights feeding out of node j in layer i
+                                       (let [weights (map #(nth % (inc j)) (nth theta (inc i)))]
+                                         (hidden-node-error a weights di+1)))
+                                     ai))))]
         (recur (dec i) (cons deltas errors))))))
 
 (defn compute-gradients
@@ -81,11 +82,11 @@
         gradients (compute-gradients x theta alpha activations errors)]
     ;; update weights with computed gradients
     ;; TODO: can do update directly after gradient computation
-    (map (fn [ti gi]
-           (map (fn [w g] (map + w g))
-                ti gi))
-         theta
-         gradients)))
+    (mapv (fn [ti gi]
+            (mapv (fn [w g] (mapv + w g))
+                  ti gi))
+          theta
+          gradients)))
 
 (defn gradient-descent
   "Performs gradient descent on input and target values of all examples x and
@@ -119,10 +120,11 @@
                  theta
                  (let [r (java.util.Random.)
                        rand (fn [] (.nextGaussian r))]
-                   (for [i (range (dec (count layers)))]
-                     (let [ni (inc (nth layers i))    ;; number of nodes at layer i (+ bias node)
-                           ni+1 (nth layers (inc i))] ;; number of nodes at layer i+1
-                       (repeatedly ni+1 #(repeatedly ni rand))))))] ;; initialize random values as parameters
+                   (vec
+                    (for [i (range (dec (count layers)))]
+                      (let [ni (inc (nth layers i))    ;; number of nodes at layer i (+ bias node)
+                            ni+1 (nth layers (inc i))] ;; number of nodes at layer i+1
+                        (vec (repeatedly ni+1 #(repeatedly ni rand))))))))] ;; initialize random values as parameters
      (-> model
          (assoc :layers layers)
          (assoc :parameters (gradient-descent x y theta alpha))))))
