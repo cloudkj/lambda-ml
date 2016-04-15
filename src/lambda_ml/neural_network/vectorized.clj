@@ -20,18 +20,32 @@
                   outputs (->> (m/mmul inputs+bias (m/transpose weights))
                                (m/emap c/sigmoid))]
               (conj activations outputs)))
-          []
+          (vector)
           theta))
 
 (defn back-propagate
   [y theta activations]
   (let [a (last activations)
-        errors (m/mul (m/sub y a) a (m/sub 1 a))]
+        output-errors (m/mul (m/sub y a) a (m/sub 1 a))]
    (->> (map vector (reverse (rest theta)) (reverse (butlast activations)))
-        (reduce (fn [e [weights a]]
-                  (cons (->> (weights-without-bias weights)
-                             (m/mmul (last e))
+        (reduce (fn [errors [w a]]
+                  (cons (->> (weights-without-bias w)
+                             (m/mmul (last errors))
                              (m/mul a (m/sub 1 a)))
-                        e))
-                (list errors))
+                        errors))
+                (list output-errors))
         (vec))))
+
+(defn gradient-descent
+  "Performs gradient descent on matrices of input and target values x and y, and
+  returns a sequence of matrices representing the updated weights."
+  [x y theta alpha]
+  (let [activations (feed-forward x theta)
+        errors (back-propagate y theta activations)]
+    (->> (map vector errors (cons x (butlast activations)) theta)
+         (reduce (fn [weights [e a t]]
+                   (let [a (m/join-along 1 (m/broadcast 1.0 [(m/row-count a) 1]) a)]
+                     (->> (m/mul alpha (m/mmul (m/transpose e) a)) ;; gradients
+                          (m/add t)                                ;; weights + gradients
+                          (conj weights))))
+                 (vector)))))
