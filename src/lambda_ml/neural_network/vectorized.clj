@@ -27,20 +27,23 @@
   [y theta activations]
   (let [a (last activations)
         output-errors (m/mul (m/sub y a) a (m/sub 1 a))]
-   (->> (map vector (reverse (rest theta)) (reverse (butlast activations)))
-        (reduce (fn [errors [w a]]
-                  (cons (->> (weights-without-bias w)
-                             (m/mmul (last errors))
-                             (m/mul a (m/sub 1 a)))
-                        errors))
-                (list output-errors))
-        (vec))))
+    (->> (map vector (reverse (rest theta)) (reverse (butlast activations)))
+         (reduce (fn [errors [w a]]
+                   (cons (->> (weights-without-bias w)
+                              (m/mmul (first errors))
+                              (m/mul a (m/sub 1 a)))
+                         errors))
+                 (list output-errors))
+         (vec))))
 
 (defn gradient-descent
   "Performs gradient descent on matrices of input and target values x and y, and
   returns a sequence of matrices representing the updated weights."
   [x y theta alpha]
-  (let [activations (feed-forward x theta)
+  (let [x (m/matrix x)
+        y (m/matrix y)
+        theta (map m/matrix theta)
+        activations (feed-forward x theta)
         errors (back-propagate y theta activations)]
     (->> (map vector errors (cons x (butlast activations)) theta)
          (reduce (fn [weights [e a t]]
