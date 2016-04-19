@@ -153,7 +153,8 @@
    (neural-network-cost model (map (comp vec butlast) data) (map (comp vec last) data)))
   ([model x y]
    (let [{theta :parameters cost :cost} model]
-     (cost x y theta))))
+     (when (not (nil? theta))
+       (cost x y theta)))))
 
 (defn print-neural-network
   "Prints information about a given neural network."
