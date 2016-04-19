@@ -91,18 +91,16 @@
 (defn gradient-descent
   "Performs gradient descent on input and target values of all examples x and
   y, and returns the updated weights."
-  [x y theta alpha]
-  (loop [inputs x
-         targets y
-         weights theta]
-    (if (and (empty? inputs) (empty? targets))
-      weights
-      (recur (rest inputs)
-             (rest targets)
-             (gradient-descent-step (first inputs)
-                                    (first targets)
-                                    weights
-                                    alpha)))))
+  [model x y]
+  (let [{alpha :alpha theta :parameters step :step} model]
+    (loop [inputs x
+           targets y
+           weights theta]
+      (if (and (empty? inputs) (empty? targets))
+        weights
+        (recur (rest inputs)
+               (rest targets)
+               (step (first inputs) (first targets) weights alpha))))))
 
 (defn init-parameters
   [layers]
@@ -121,15 +119,15 @@
   ([model data]
    (neural-network-fit model (map (comp vec butlast) data) (map (comp vec last) data)))
   ([model x y]
-   (let [{alpha :alpha hidden :hidden layers :layers theta :parameters init :initialize} model
+   (let [{hidden :hidden layers :layers theta :parameters init :init} model
          layers (or layers
                     (concat [(count (first x))]   ;; number of input nodes
                             hidden                ;; number of nodes at each hidden layer
                             [(count (first y))])) ;; number of output nodes
-         theta (or theta (init layers))]
-     (-> model
-         (assoc :layers layers)
-         (assoc :parameters (gradient-descent x y theta alpha))))))
+         model (-> model
+                   (assoc :layers layers)
+                   (assoc :parameters (or theta (init layers))))]
+     (assoc model :parameters (gradient-descent model x y)))))
 
 (defn neural-network-predict
   "Predicts the values of example data using a neural network model."
@@ -165,4 +163,5 @@
   [hidden alpha]
   {:alpha alpha
    :hidden hidden
-   :initialize init-parameters})
+   :init init-parameters
+   :step gradient-descent-step})
