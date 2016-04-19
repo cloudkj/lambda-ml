@@ -124,7 +124,7 @@
                     (for [i (range (dec (count layers)))]
                       (let [ni (inc (nth layers i))    ;; number of nodes at layer i (+ bias node)
                             ni+1 (nth layers (inc i))] ;; number of nodes at layer i+1
-                        (vec (repeatedly ni+1 #(repeatedly ni rand))))))))] ;; initialize random values as parameters
+                        (vec (repeatedly ni+1 (vec #(repeatedly ni rand)))))))))] ;; initialize random values as parameters
      (-> model
          (assoc :layers layers)
          (assoc :parameters (gradient-descent x y theta alpha))))))
