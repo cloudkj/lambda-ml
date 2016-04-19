@@ -113,6 +113,13 @@
          ;; initialize random values as parameters
          (vec (repeatedly ni+1 #(vec (repeatedly ni rand)))))))))
 
+(defn error-cost
+  [x y theta]
+  (reduce + (map (fn [xi yi]
+                   (let [output (last (feed-forward xi theta))]
+                     (reduce + (map (comp #(* % %) -) output yi))))
+                 x y)))
+
 (defn neural-network-fit
   "Trains a neural network model for the given training data. For new models,
   parameters are initialized as random values from a normal distribution."
@@ -140,11 +147,8 @@
   ([model data]
    (neural-network-cost model (map (comp vec butlast) data) (map (comp vec last) data)))
   ([model x y]
-   (let [{theta :parameters} model]
-     (reduce + (map (fn [xi yi]
-                      (let [output (last (feed-forward xi theta))]
-                        (reduce + (map (comp #(* % %) -) output yi))))
-                    x y)))))
+   (let [{theta :parameters cost :cost} model]
+     (cost x y theta))))
 
 (defn print-neural-network
   "Prints information about a given neural network."
@@ -164,4 +168,5 @@
   {:alpha alpha
    :hidden hidden
    :init init-parameters
-   :step gradient-descent-step})
+   :step gradient-descent-step
+   :cost error-cost})
