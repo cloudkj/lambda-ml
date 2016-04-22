@@ -29,8 +29,8 @@
     (is (< (Math/abs (- 0.62727869 (nth output 1))) 1E-6))))
 
 (deftest test-output-node-error
-  (is (< (Math/abs (- 0.117077  (output-node-error 0.53 1.0))) 1E-6))
-  (is (< (Math/abs (- -0.146853 (output-node-error 0.63 0.0))) 1E-6)))
+  (is (< (Math/abs (- -0.117077  (output-node-error 0.53 1.0))) 1E-6))
+  (is (< (Math/abs (- 0.146853 (output-node-error 0.63 0.0))) 1E-6)))
 
 (deftest test-hidden-node-error
   (is (< (Math/abs (- -0.0194298 (hidden-node-error 0.53 [-0.4 0.2] [0.12 -0.15]))) 1E-6)))
@@ -43,7 +43,8 @@
         x [0.05 0.1]
         y [0.01 0.99]
         alpha 0.5
-        [w0 w1] (gradient-descent-step x y weights alpha)]
+        lambda 0
+        [w0 w1] (gradient-descent-step x y weights alpha lambda)]
     (is (< (Math/abs (- 0.149780716 (nth (nth w0 0) 1))) 1E-6))
     (is (< (Math/abs (- 0.19956143  (nth (nth w0 0) 2))) 1E-6))
     (is (< (Math/abs (- 0.24975114  (nth (nth w0 1) 1))) 1E-6))
@@ -58,7 +59,7 @@
               [0 1 [1]]
               [1 0 [1]]
               [1 1 [0]]]
-        model (make-neural-network [3] 0.5)
+        model (make-neural-network [3] 0.5 0.0)
         fit (nth (iterate #(neural-network-fit % data) model) 5000)
         predictions (map first (neural-network-predict fit (map butlast data)))]
     (is (> 0.1 (nth predictions 0)))

@@ -24,7 +24,7 @@
 (defn back-propagate
   [y theta activations]
   (let [a (last activations)
-        output-errors (m/matrix (m/mul (m/sub y a) a (m/sub 1 a)))]
+        output-errors (m/matrix (m/mul (m/sub a y) a (m/sub 1 a)))]
     (->> (map vector (reverse (rest theta)) (reverse (butlast activations)))
          (reduce (fn [errors [w a]]
                    (cons (m/mul a (m/sub 1 a) (m/mmul (first errors) (drop-bias w)))
@@ -52,11 +52,15 @@
       (m/transpose)))
 
 (defn gradient-descent-step
-  [x y theta alpha]
+  [x y theta alpha lambda]
   (let [activations (feed-forward x theta)
         errors (back-propagate y theta activations)
-        gradients (compute-gradients x alpha activations errors)]
-    (mapv m/add theta gradients)))
+        gradients (compute-gradients x alpha activations errors)
+        regularization (map (fn [w]
+                              (-> (m/mul alpha lambda w)
+                                  (m/set-column 0 (m/matrix (repeat (m/row-count w) 0)))))
+                            theta)]
+    (mapv m/sub theta gradients regularization)))
 
 (defn cost
   [x y theta]
@@ -67,8 +71,9 @@
   (mapv vec (feed-forward-batch x theta)))
 
 (defn make-neural-network
-  [hidden alpha]
+  [hidden alpha lambda]
   {:alpha alpha
+   :lambda lambda
    :hidden hidden
    :init #(map m/matrix (n/init-parameters %))
    :step gradient-descent-step

@@ -19,7 +19,7 @@
   "Returns the error of an output node, where a is the activation value of the
   output node and t is the target value (label) of the node."
   [a t]
-  (* (- t a) a (- 1 a)))
+  (* (- a t) a (- 1 a)))
 
 (defn hidden-node-error
   "Returns the error of a hidden node, where a is the activation value of the
@@ -76,15 +76,18 @@
 (defn gradient-descent-step
   "Performs a single gradient step on the input and target values of a single
   example x and label y, and returns the updated weights."
-  [x y theta alpha]
+  [x y theta alpha lambda]
   (let [activations (feed-forward x theta)
         errors (back-propagate y theta activations)
         gradients (compute-gradients x theta alpha activations errors)]
-    ;; update weights with computed gradients
-    ;; TODO: can do update directly after gradient computation
-    (mapv (fn [ti gi]
-            (mapv (fn [w g] (mapv + w g))
-                  ti gi))
+    (mapv (fn [w g]
+            (mapv (fn [wi gi]
+                    (mapv (fn [j wij gij]
+                            (if (= j 0)
+                              (- wij gij)
+                              (- wij gij (* alpha lambda wij))))
+                          (range (count wi)) wi gi))
+                  w g))
           theta
           gradients)))
 
@@ -92,7 +95,7 @@
   "Performs gradient descent on input and target values of all examples x and
   y, and returns the updated weights."
   [model x y]
-  (let [{alpha :alpha theta :parameters step :step} model]
+  (let [{alpha :alpha lambda :lambda theta :parameters step :step} model]
     (loop [inputs x
            targets y
            weights theta]
@@ -100,7 +103,7 @@
         weights
         (recur (rest inputs)
                (rest targets)
-               (step (first inputs) (first targets) weights alpha))))))
+               (step (first inputs) (first targets) weights alpha lambda))))))
 
 (defn init-parameters
   [layers]
@@ -170,8 +173,9 @@
   "Returns a neural network model where alpha is the learning rate and hidden is
   a sequence of numbers where the ith element is the number of nodes in the ith
   hidden layer."
-  [hidden alpha]
+  [hidden alpha lambda]
   {:alpha alpha
+   :lambda lambda
    :hidden hidden
    :init init-parameters
    :step gradient-descent-step
