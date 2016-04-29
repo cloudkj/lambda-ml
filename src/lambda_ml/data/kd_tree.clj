@@ -3,17 +3,23 @@
 ;; K-d tree
 
 (defn make-tree
-  ([dims points]
-   (make-tree dims points 0))
-  ([dims points depth]
-   (if (empty? points)
+  "Returns a k-d tree, with dims as the number of dimensions, for the given
+  nodes. Optionally, a function f can be supplied and used to return the
+  k-dimensional point for a given node. Otherwise, the node itself is assumed to
+  be the k-dimensional point."
+  ([dims nodes]
+   (make-tree dims nodes identity))
+  ([dims nodes f]
+   (make-tree dims nodes f 0))
+  ([dims nodes f depth]
+   (if (empty? nodes)
      nil
-     (let [dim (fn [p] (nth p (mod depth dims)))
-           sorted (sort-by dim points)
+     (let [dim (fn [node] (nth (f node) (mod depth dims)))
+           sorted (sort-by dim nodes)
            median (quot (count sorted) 2)]
-       [(nth sorted median)
-        (make-tree dims (take median sorted) (inc depth))
-        (make-tree dims (drop (+ median 1) sorted) (inc depth))]))))
+       (vector (nth sorted median)
+               (make-tree dims (take median sorted) f (inc depth))
+               (make-tree dims (drop (+ median 1) sorted) f (inc depth)))))))
 
 (defn get-value
   [tree]

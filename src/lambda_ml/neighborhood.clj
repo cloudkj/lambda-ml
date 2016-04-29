@@ -5,13 +5,17 @@
 ;; K-nearest neighbors
 
 (defn make-knn
-  [f points]
-  "Given a distance function f and a coll of points, returns a function that,
-  given k and a query point, returns a priority queue of the k nearest
-  neighboring points. Assumes that all points are represented as sequences of
-  the same dimension."
-  (let [dims (count (first points))
-        t (kd/make-tree dims points)]
+  "Given a distance function f and a coll of items, each of which have an
+  associated dimensional point, returns a function that, given k and a query
+  item, returns a priority queue of the k nearest neighboring items. Optionally,
+  a function g can be supplied and used to return the dimensional point for an
+  item. Otherwise, the item itself is assumed to be the point. Assumes that all
+  points are represented as sequences of the same dimension."
+  ([f items]
+   (make-knn f identity items))
+  ([f g items]
+  (let [dims (count (g (first items)))
+        t (kd/make-tree dims items g)]
     (fn knn
       ([k query]
        (knn k query t 0 (pq/make-queue)))
@@ -21,7 +25,7 @@
          (let [[node left right] ((juxt kd/get-value kd/get-left kd/get-right) tree)
                dim (mod depth dims)
                ;; Determine near and far branches
-               [near far] (if (<= (nth query dim) (nth node dim)) [left right] [right left])
+               [near far] (if (<= (nth (g query) dim) (nth (g node) dim)) [left right] [right left])
                cand (->>
                      ;; Try to add current node to candidates
                      (pq/insert cand node (f query node) k)
@@ -31,7 +35,7 @@
            (if (or (< (count cand) k)
                    (< (f query node dim) (pq/item-priority (pq/get-tail cand))))
              (knn k query far (inc depth) cand)
-             cand)))))))
+             cand))))))))
 
 ;; Proximity search
 

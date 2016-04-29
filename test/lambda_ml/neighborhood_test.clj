@@ -86,6 +86,23 @@
     (is (= :MountainView
            (-> (knn 2 ((map-invert points) :PaloAlto)) second pq/item-value points)))))
 
+(deftest test-knn-metadata
+  (let [points [[:a 2 3]
+                [:b 5 4]
+                [:c 9 6]
+                [:d 4 7]
+                [:e 8 1]
+                [:f 7 2]]
+        point->val rest
+        dist (fn dist
+               ([x y]   (d/euclidean (point->val x) (point->val y)))
+               ([x y d] (d/euclidean (point->val x) (point->val y) d)))
+        knn (make-knn dist point->val points)]
+    (is (= :f (first (pq/item-value (second (knn 2 [:e 8 1]))))))
+    (is (= :b (first (pq/item-value (second (knn 2 [:a 2 3]))))))
+    (is (= :e (first (pq/item-value (second (knn 2 [:f 7 2]))))))
+    (is (= :b (first (pq/item-value (second (knn 2 [:d 4 7]))))))))
+
 (deftest test-search
   (let [points {:SanFrancisco [37.759859 -122.437134]
                 :Berkeley     [37.864012 -122.277832]
