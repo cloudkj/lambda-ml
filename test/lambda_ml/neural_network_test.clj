@@ -28,13 +28,6 @@
     (is (< (Math/abs (- 0.53353777 (nth output 0))) 1E-6))
     (is (< (Math/abs (- 0.62727869 (nth output 1))) 1E-6))))
 
-(deftest test-output-node-error
-  (is (< (Math/abs (- -0.117077  (output-node-error 0.53 1.0))) 1E-6))
-  (is (< (Math/abs (- 0.146853 (output-node-error 0.63 0.0))) 1E-6)))
-
-(deftest test-hidden-node-error
-  (is (< (Math/abs (- -0.0194298 (hidden-node-error 0.53 [-0.4 0.2] [0.12 -0.15]))) 1E-6)))
-
 (deftest test-gradient-descent-step
   (let [weights [[[0.35 0.15 0.20]
                   [0.35 0.25 0.30]]

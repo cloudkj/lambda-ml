@@ -1,77 +1,63 @@
 (ns lambda-ml.neural-network
-  (:require [lambda-ml.core :as c]))
+  (:require [lambda-ml.core :as c]
+            [clojure.core.matrix :as m]))
+
+(m/set-current-implementation :vectorz)
+
+(def bias (m/matrix [1.0]))
+
+(defn drop-bias
+  [m]
+  (m/submatrix m 1 [1 (dec (m/column-count m))]))
 
 (defn feed-forward
   "Returns the activation values for nodes in a neural network after forward
   propagating the values of a single input example x through the network."
   [x theta]
-  (loop [i 0
-         activations []]
-    (if (= i (count theta))
-      activations
-      (let [weights (nth theta i)
-            input (if (= i 0) x (last activations))
-            input+bias (c/vector-with-intercept input)
-            output (mapv #(c/sigmoid (c/dot-product % input+bias)) weights)]
-        (recur (inc i) (conj activations output))))))
+  (reduce (fn [activations weights]
+            (let [inputs (if (empty? activations) (m/matrix x) (last activations))
+                  inputs+bias (m/join bias inputs)
+                  outputs (m/emap c/sigmoid (m/mmul weights inputs+bias))]
+              (conj activations outputs)))
+          []
+          theta))
 
-(defn output-node-error
-  "Returns the error of an output node, where a is the activation value of the
-  output node and t is the target value (label) of the node."
-  [a t]
-  (* (- a t) a (- 1 a)))
-
-(defn hidden-node-error
-  "Returns the error of a hidden node, where a is the activation value of the
-  node, w is the weights feeding out of the node, and d is the errors of the
-  nodes in the next layer. Formally, for the kth node in the ith layer:
-  error_ik = a_ik * (1 - a_ik) * sum_{j in i+1} w_i+1,j * error_i+1,j"
-  [a w d]
-  (* a (- 1 a) (c/dot-product w d)))
+(defn feed-forward-batch
+  "Returns the activation values for nodes in a neural network after forward
+  propagating a collection of input examples x through the network."
+  [x theta]
+  (-> (reduce (fn [inputs weights]
+                (let [bias (m/broadcast 1.0 [1 (m/column-count inputs)])
+                      inputs+bias (m/join bias inputs)
+                      outputs (m/emap c/sigmoid (m/mmul weights inputs+bias))]
+                  outputs))
+              (m/transpose (m/matrix x))
+              theta)
+      (m/transpose)))
 
 (defn back-propagate
   "Returns the errors of each node in a neural network after propagating the
   the errors at the output nodes, computed against a single target value y,
   backwards through the network."
   [y theta activations]
-  (loop [i (dec (count theta))
-         errors (list)]
-    (if (< i 0)
-      (vec errors)
-      (let [ai (nth activations i) ;; activations at layer i
-            deltas (if (= i (dec (count theta)))
-                     ;; output layer
-                     (mapv output-node-error ai y)
-                     ;; hidden layer(s)
-                     (let [di+1 (first errors)] ;; errors at layer i + 1
-                       (vec
-                        (map-indexed (fn [j a]
-                                       ;; weights feeding out of node j in layer i
-                                       (let [weights (map #(nth % (inc j)) (nth theta (inc i)))]
-                                         (hidden-node-error a weights di+1)))
-                                     ai))))]
-        (recur (dec i) (cons deltas errors))))))
+  (let [a (last activations)
+        output-errors (m/matrix (m/mul (m/sub a y) a (m/sub 1 a)))]
+    (->> (map vector (reverse (rest theta)) (reverse (butlast activations)))
+         (reduce (fn [errors [w a]]
+                   (cons (m/mul a (m/sub 1 a) (m/mmul (first errors) (drop-bias w)))
+                         errors))
+                 (list output-errors))
+         (vec))))
 
 (defn compute-gradients
   "Returns the gradients for each weight given activation values and errors on
   a input values of a single example x."
-  [x theta alpha activations errors]
-  (loop [i 0
-         gradients []]
-    (if (= i (count theta))
-      gradients
-      (let [ei (nth errors i)
-            ;; x is used for the first layer since activations do not include input values
-            activations (if (= i 0) x (nth activations (dec i)))
-            ;; gradients for weights going from layer i to i + 1
-            g (map-indexed (fn [j weights]
-                             (let [error (nth ei j)]
-                               (for [k (range (count weights))]
-                                 (if (= k 0)
-                                   (* alpha error) ;; output for bias node is constant
-                                   (* alpha error (nth activations (dec k)))))))
-                           (nth theta i))]
-        (recur (inc i) (conj gradients g))))))
+  [x alpha activations errors]
+  (->> (map vector errors (cons (m/matrix x) (butlast activations)))
+       (reduce (fn [gradients [e a]]
+                 (let [a (m/mul alpha (m/join bias a))]
+                   (conj gradients (m/outer-product e a))))
+               [])))
 
 (defn gradient-descent-step
   "Performs a single gradient step on the input and target values of a single
@@ -79,17 +65,12 @@
   [x y theta alpha lambda]
   (let [activations (feed-forward x theta)
         errors (back-propagate y theta activations)
-        gradients (compute-gradients x theta alpha activations errors)]
-    (mapv (fn [w g]
-            (mapv (fn [wi gi]
-                    (mapv (fn [j wij gij]
-                            (if (= j 0)
-                              (- wij gij)
-                              (- wij gij (* alpha lambda wij))))
-                          (range (count wi)) wi gi))
-                  w g))
-          theta
-          gradients)))
+        gradients (compute-gradients x alpha activations errors)
+        regularization (map (fn [w]
+                              (-> (m/mul alpha lambda w)
+                                  (m/set-column 0 (m/matrix (repeat (m/row-count w) 0)))))
+                            theta)]
+    (mapv m/sub theta gradients regularization)))
 
 (defn gradient-descent
   "Performs gradient descent on input and target values of all examples x and
@@ -109,24 +90,21 @@
   [layers]
   (let [r (java.util.Random.)
         rand (fn [] (.nextGaussian r))]
-    (vec
-     (for [i (range (dec (count layers)))]
-       (let [ni (inc (nth layers i))    ;; number of nodes at layer i (+ bias node)
-             ni+1 (nth layers (inc i))] ;; number of nodes at layer i+1
-         ;; initialize random values as parameters
-         (vec (repeatedly ni+1 #(vec (repeatedly ni rand)))))))))
+    (->> (for [i (range (dec (count layers)))]
+           (let [ni (inc (nth layers i))    ;; number of nodes at layer i (+ bias node)
+                 ni+1 (nth layers (inc i))] ;; number of nodes at layer i+1
+             ;; initialize random values as parameters
+             (vec (repeatedly ni+1 #(vec (repeatedly ni rand))))))
+         (mapv m/matrix))))
 
 (defn mean-squared-error
   [x y theta]
-  (/ (reduce + (map (fn [xi yi]
-                      (let [output (last (feed-forward xi theta))]
-                        (reduce + (map (comp #(* % %) -) output yi))))
-                    x y))
+  (/ (m/esum (m/square (m/sub (feed-forward-batch x theta) y)))
      (count x)))
 
 (defn predict
   [x theta]
-  (map (fn [xi] (last (feed-forward xi theta))) x))
+  (mapv vec (feed-forward-batch x theta)))
 
 (defn neural-network-fit
   "Trains a neural network model for the given training data. For new models,
