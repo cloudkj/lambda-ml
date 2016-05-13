@@ -4,7 +4,7 @@
 
 (deftest test-random-sample
   (doseq [k (range 5 11)]
-    (let [sample (random-sample (range 10) k)]
-      (is (= k (count sample)))
-      (is (= k (count (distinct sample))))
-      (is (every? #(< % 10) sample)))))
+    (let [s (sample (range 10) k)]
+      (is (= k (count s)))
+      (is (= k (count (distinct s))))
+      (is (every? #(< % 10) s)))))

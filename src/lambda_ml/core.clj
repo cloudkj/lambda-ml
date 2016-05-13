@@ -22,16 +22,16 @@
         coll (shuffle coll)]
     (partition size size [] coll)))
 
-(defn random-sample
+(defn sample
   "Returns n randomly selected elements, without replacement, from coll."
   ([coll n]
-   (random-sample coll n (list)))
-  ([coll n sample]
+   (sample coll n (list)))
+  ([coll n s]
    (if-not (vector? coll)
-     (random-sample (vec coll) n sample)
+     (sample (vec coll) n s)
      (let [index (rand-int (count coll))]
        (if (or (<= n 0) (empty? coll))
-         sample
-         (random-sample (subvec (assoc coll index (first coll)) 1)
-                        (dec n)
-                        (conj sample (nth coll index))))))))
+         s
+         (sample (subvec (assoc coll index (first coll)) 1)
+                 (dec n)
+                 (conj s (nth coll index))))))))
