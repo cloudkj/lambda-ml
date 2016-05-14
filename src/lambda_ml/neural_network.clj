@@ -152,14 +152,14 @@
   ([model data]
    (neural-network-fit model (map (comp vec butlast) data) (map (comp vec last) data)))
   ([model x y]
-   (let [{hidden :hidden layers :layers theta :parameters init :init} model
+   (let [{hidden :hidden layers :layers theta :parameters} model
          layers (or layers
                     (concat [(count (first x))]   ;; number of input nodes
                             hidden                ;; number of nodes at each hidden layer
                             [(count (first y))])) ;; number of output nodes
          model (-> model
                    (assoc :layers layers)
-                   (assoc :parameters (or theta (init layers))))]
+                   (assoc :parameters (or theta (init-parameters layers))))]
      (assoc model :parameters (gradient-descent model x y)))))
 
 (defn neural-network-predict
@@ -197,7 +197,6 @@
    {:alpha alpha
     :lambda lambda
     :hidden hidden
-    :init init-parameters
     :cost cost
     :output-error (cond
                     (= cost cross-entropy-cost) cross-entropy-output-error
