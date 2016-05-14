@@ -4,7 +4,10 @@
 
 (m/set-current-implementation :vectorz)
 
+(declare mean-squared-error)
+
 (def bias (m/matrix [1.0]))
+(def epsilon 0.0001)
 
 (defn drop-bias
   [m]
@@ -52,12 +55,29 @@
 (defn compute-gradients
   "Returns the gradients for each weight given activation values and errors on
   a input values of a single example x."
-  [x alpha activations errors]
+  [x activations errors]
   (->> (map vector errors (cons (m/matrix x) (butlast activations)))
        (reduce (fn [gradients [e a]]
-                 (let [a (m/mul alpha (m/join bias a))]
+                 (let [a (m/join bias a)]
                    (conj gradients (m/outer-product e a))))
                [])))
+
+(defn numeric-gradients
+  "Returns the numeric approximations of the gradients for each weight given the
+  input values of a single example x and label y. Used for debugging by checking
+  against the computed gradients during backpropagation."
+  [x y theta]
+  (mapv (fn [k weights]
+          (m/matrix (for [i (range (m/row-count weights))]
+                      (for [j (range (m/column-count weights))]
+                        (let [w (m/select weights i j)
+                              theta+ (assoc theta k (m/set-selection weights i j (+ w epsilon)))
+                              theta- (assoc theta k (m/set-selection weights i j (- w epsilon)))]
+                          (/ (- (mean-squared-error (list x) (list y) theta+)
+                                (mean-squared-error (list x) (list y) theta-))
+                             (* 2 epsilon)))))))
+        (range)
+        theta))
 
 (defn gradient-descent-step
   "Performs a single gradient step on the input and target values of a single
@@ -65,12 +85,14 @@
   [x y theta alpha lambda]
   (let [activations (feed-forward x theta)
         errors (back-propagate y theta activations)
-        gradients (compute-gradients x alpha activations errors)
+        gradients (compute-gradients x activations errors)
         regularization (map (fn [w]
                               (-> (m/mul alpha lambda w)
                                   (m/set-column 0 (m/matrix (repeat (m/row-count w) 0)))))
                             theta)]
-    (mapv m/sub theta gradients regularization)))
+    ;; Numeric gradient checking
+    ;(println (map (comp #(/ (m/esum %) (m/ecount %)) m/abs m/sub) gradients (numeric-gradients x y theta)))
+    (mapv m/sub theta (m/mul gradients alpha) regularization)))
 
 (defn gradient-descent
   "Performs gradient descent on input and target values of all examples x and
@@ -100,7 +122,7 @@
 (defn mean-squared-error
   [x y theta]
   (/ (m/esum (m/square (m/sub (feed-forward-batch x theta) y)))
-     (count x)))
+     2))
 
 (defn predict
   [x theta]
