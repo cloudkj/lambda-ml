@@ -37,7 +37,9 @@
         y [0.01 0.99]
         alpha 0.5
         lambda 0
-        [w0 w1] (gradient-descent-step x y weights alpha lambda)]
+        [w0 w1] (gradient-descent-step x y weights alpha lambda
+                                       quadratic-cost
+                                       quadratic-output-error)]
     (is (< (Math/abs (- 0.149780716 (nth (nth w0 0) 1))) 1E-6))
     (is (< (Math/abs (- 0.19956143  (nth (nth w0 0) 2))) 1E-6))
     (is (< (Math/abs (- 0.24975114  (nth (nth w0 1) 1))) 1E-6))
