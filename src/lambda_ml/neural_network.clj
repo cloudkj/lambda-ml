@@ -141,8 +141,7 @@
 
 (defn quadratic-output-error
   [y activations]
-  ;; TODO: do we need the m/matrix call here?
-  (m/matrix (m/mul (m/sub activations y) activations (m/sub 1 activations))))
+  (m/mul (m/sub activations y) activations (m/sub 1 activations)))
 
 ;; API
 
