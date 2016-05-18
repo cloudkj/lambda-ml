@@ -87,8 +87,8 @@
                                   (m/set-column 0 (m/matrix (repeat (m/row-count w) 0)))))
                             theta)]
     ;; Numeric gradient checking
-    ;(println (map (comp #(/ (m/esum %) (m/ecount %)) m/abs m/sub) gradients (numeric-gradients x y theta cost)))
-    (mapv m/sub theta (m/mul gradients alpha) regularization)))
+    ;;(println (map (comp #(/ (m/esum %) (m/ecount %)) m/abs m/sub) gradients (numeric-gradients x y theta cost)))
+    (mapv m/sub theta (map #(m/mul % alpha) gradients) regularization)))
 
 (defn gradient-descent
   "Performs gradient descent on input and target values of all examples x and
