@@ -1,4 +1,4 @@
-(defproject lambda-ml "0.1.0-SNAPSHOT"
+(defproject lambda-ml "0.1.0"
   :description "A small machine learning library aimed at providing simple, concise implementations of machine learning techniques and utilities."
   :url "http://github.com/cloudkj/lambda-ml"
   :license {:name "MIT License"
