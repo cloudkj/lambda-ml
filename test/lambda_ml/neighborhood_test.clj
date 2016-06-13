@@ -93,11 +93,7 @@
                 [:d 4 7]
                 [:e 8 1]
                 [:f 7 2]]
-        point->val rest
-        dist (fn dist
-               ([x y]   (d/euclidean (point->val x) (point->val y)))
-               ([x y d] (d/euclidean (point->val x) (point->val y) d)))
-        knn (make-knn dist point->val points)]
+        knn (make-knn d/euclidean rest points)]
     (is (= :f (first (pq/item-value (second (knn 2 [:e 8 1]))))))
     (is (= :b (first (pq/item-value (second (knn 2 [:a 2 3]))))))
     (is (= :e (first (pq/item-value (second (knn 2 [:f 7 2]))))))

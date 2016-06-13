@@ -28,12 +28,12 @@
                [near far] (if (<= (nth (g query) dim) (nth (g node) dim)) [left right] [right left])
                cand (->>
                      ;; Try to add current node to candidates
-                     (pq/insert cand node (f query node) k)
+                     (pq/insert cand node (f (g query) (g node)) k)
                      ;; Explore near branch
                      (knn k query near (inc depth)))]
            ;; Optionally, explore far branch
            (if (or (< (count cand) k)
-                   (< (f query node dim) (pq/item-priority (pq/get-tail cand))))
+                   (< (f (g query) (g node) dim) (pq/item-priority (pq/get-tail cand))))
              (knn k query far (inc depth) cand)
              cand))))))))
 
