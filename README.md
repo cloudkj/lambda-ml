@@ -36,8 +36,9 @@ enjoyment.
 
 (def epsilon 4.0)
 (def min-pts 2)
+(def data [[2 10] [2 5] [8 4] [5 8] [7 5] [6 4] [1 2] [4 9]])
 
-(dbscan euclidean epsilon min-pts [[2 10] [2 5] [8 4] [5 8] [7 5] [6 4] [1 2] [4 9]])
+(dbscan euclidean epsilon min-pts data)
 ;;=> {[4 9] 2, [5 8] 2, [7 5] 1, [6 4] 1, [8 4] 1}
 ```
 
@@ -50,8 +51,9 @@ enjoyment.
 
 (def k 2)
 (def iters 100)
+(def data [[1 1] [1.5 2] [3 4] [5 7] [3.5 5] [4.5 5] [3.5 4.5]])
 
-(nth (k-means k euclidean [[1 1] [1.5 2] [3 4] [5 7] [3.5 5] [4.5 5] [3.5 4.5]]) iters)
+(nth (k-means k euclidean data) iters)
 ;;=> {0 ([3.5 4.5] [4.5 5] [3.5 5] [5 7] [3 4]), 1 ([1.5 2] [1 1])}
 ```
 
@@ -62,7 +64,8 @@ enjoyment.
  (:require [lambda-ml.neighborhood :refer :all]
            [lambda-ml.distance :refer :all]))
 
-(def knn (make-knn euclidean [[2 3] [5 4] [9 6] [4 7] [8 1] [7 2]]))
+(def data [[2 3] [5 4] [9 6] [4 7] [8 1] [7 2]])
+(def knn (make-knn euclidean data))
 
 (knn 3 [8 1])
 ;;=> [[0 [8 1]] [2 [7 2]] [18 [5 4]]]
@@ -74,8 +77,9 @@ enjoyment.
 (ns example
  (:require [lambda-ml.regression :refer :all]))
 
+(def data [[-2 -1] [1 1] [3 2]])
 (def model (make-linear-regression 0.01 0 5000))
-(def fit (regression-fit model [[-2 -1] [1 1] [3 2]]))
+(def fit (regression-fit model data))
 
 (fit :parameters)
 ;;=> (0.26315789473683826 0.6052631578947385)
@@ -83,14 +87,27 @@ enjoyment.
 
 ### Logistic regression
 
+```clojure
+(ns example
+ (:require [lambda-ml.regression :refer :all]))
+
+(def data [[0.50 0] [0.75 0] [1.00 0] [1.25 0] [1.50 0] [1.75 0] [1.75 1] [2.00 0] [2.25 1] [2.50 0] [2.75 1] [3.00 0] [3.25 1] [3.50 0] [4.00 1] [4.25 1] [4.50 1] [4.75 1] [5.00 1] [5.50 1]])
+(def model (make-logistic-regression 0.1 0 10000))
+(def fit (regression-fit model data))
+
+(fit :parameters)
+;;=> (-4.077712444728931 1.5046450944762417)
+```
+
 ### Naive Bayes
 
 ```clojure
 (ns example
  (:require [lambda-ml.naive-bayes :refer :all]))
 
-(def model (naive-bayes-fit [[6.0 180 12] [5.92 190 11] [5.58 170 12] [5.92 165 10] [5.0 100 6] [5.5 150 8] [5.42 130 7] [5.75 150 9]]
-                            [:male :male :male :male :female :female :female :female]))
+(def x [[6.0 180 12] [5.92 190 11] [5.58 170 12] [5.92 165 10] [5.0 100 6] [5.5 150 8] [5.42 130 7] [5.75 150 9]])
+(def y [:male :male :male :male :female :female :female :female])
+(def model (naive-bayes-fit x y))
 
 (naive-bayes-predict model [[6.0 130 8]])
 ;;=> (:female)
