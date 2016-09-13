@@ -22,13 +22,13 @@
 
 ;; @@
 (def teams
-  (with-open [in (clojure.java.io/reader "march-machine-learning-mania-2016-v2/Teams.csv")]
+  (with-open [in (clojure.java.io/reader "resources/examples/kaggle/march-machine-learning-mania-2016-v2/Teams.csv")]
     (doall
       (->> (rest (csv/read-csv in))
            (reduce (fn [m [id name]] (assoc m (read-string id) name)) {})))))
 
 (def slots
-  (with-open [in (clojure.java.io/reader "march-machine-learning-mania-2016-v2/TourneySlots.csv")]
+  (with-open [in (clojure.java.io/reader "resources/examples/kaggle/march-machine-learning-mania-2016-v2/TourneySlots.csv")]
     (doall
       (->> (rest (csv/read-csv in))
            (reduce (fn [m [season slot hi lo]]
@@ -38,7 +38,7 @@
                    {})))))
 
 (def seeds
-  (with-open [in (clojure.java.io/reader "march-machine-learning-mania-2016-v2/TourneySeeds.csv")]
+  (with-open [in (clojure.java.io/reader "resources/examples/kaggle/march-machine-learning-mania-2016-v2/TourneySeeds.csv")]
     (doall
       (->> (rest (csv/read-csv in))
            (reduce (fn [m [season seed team]]
@@ -50,7 +50,7 @@
   (Integer/parseInt (subs s 1 3)))
 
 (def seeds-index
-  (with-open [in (clojure.java.io/reader "march-machine-learning-mania-2016-v2/TourneySeeds.csv")]
+  (with-open [in (clojure.java.io/reader "resources/examples/kaggle/march-machine-learning-mania-2016-v2/TourneySeeds.csv")]
     (doall
       (->> (rest (csv/read-csv in))
            (reduce (fn [m [season seed team]]
@@ -58,7 +58,7 @@
                    {})))))
 
 (def tourney-results
-  (with-open [in (clojure.java.io/reader "march-machine-learning-mania-2016-v2/TourneyCompactResults.csv")]
+  (with-open [in (clojure.java.io/reader "resources/examples/kaggle/march-machine-learning-mania-2016-v2/TourneyCompactResults.csv")]
     (doall
       (->> (rest (csv/read-csv in))
            (reduce (fn [m row]
@@ -74,7 +74,7 @@
 
 ;; @@
 (def stats
-  (with-open [in (clojure.java.io/reader "march-machine-learning-mania-2016-v2/RegularSeasonCompactResults.csv")]
+  (with-open [in (clojure.java.io/reader "resources/examples/kaggle/march-machine-learning-mania-2016-v2/RegularSeasonCompactResults.csv")]
     (doall
       (->> (rest (csv/read-csv in))
            (reduce (fn [m row]
@@ -247,11 +247,11 @@
     (println "lambda =" lambda "accuracy =" accuracy)))
 ;; @@
 ;; ->
-;;; 1.0305776657954324
+;;; 1.0195345016026474
 ;;; lambda = 0 accuracy = 0.6865672
-;;; 1.1177901240356887
+;;; 1.0140108570708222
 ;;; lambda = 0.1 accuracy = 0.6865672
-;;; 0.8950107957597521
+;;; 1.1385485393391344
 ;;; lambda = 1.0 accuracy = 0.6865672
 ;;; 
 ;; <-
