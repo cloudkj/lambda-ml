@@ -5,6 +5,10 @@ implementations of machine learning techniques and utilities. It is written in
 Lisp (using the implementation du jour, Clojure) to maximize expressiveness and
 enjoyment.
 
+## Documentation
+
+* [API Docs](https://cloudkj.github.io/lambda-ml/)
+
 ## Example Usage
 
 ### Artificial neural networks
