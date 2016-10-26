@@ -9,7 +9,13 @@ enjoyment.
 
 * [API Docs](https://cloudkj.github.io/lambda-ml/)
 
-## Example Usage
+## Installation
+
+Add the following dependency to your project:
+
+    [lambda-ml "0.1.0-SNAPSHOT"]
+
+## Examples
 
 ### Artificial neural networks
 
@@ -121,18 +127,18 @@ enjoyment.
 
 ### Algorithms
 
-* Artificial neural networks
-* DBSCAN
-* K-means
-* K-nearest neighbors
-* Linear regression
-* Logistic regression
-* Naive Bayes
+* [Artificial neural networks](https://cloudkj.github.io/lambda-ml/lambda-ml.neural-network.html)
+* [DBSCAN](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.dbscan.html)
+* [K-means](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.k-means.html)
+* [K-nearest neighbors](https://cloudkj.github.io/lambda-ml/lambda-ml.neighborhood.html)
+* [Linear regression](https://cloudkj.github.io/lambda-ml/lambda-ml.regression.html)
+* [Logistic regression](https://cloudkj.github.io/lambda-ml/lambda-ml.regression.html)
+* [Naive Bayes](https://cloudkj.github.io/lambda-ml/lambda-ml.naive-bayes.html)
 
 ### Data Structures
 
-* K-d tree
-* Priority queue
+* [K-d tree](https://cloudkj.github.io/lambda-ml/lambda-ml.data.kd-tree.html)
+* [Priority queue](https://cloudkj.github.io/lambda-ml/lambda-ml.data.priority-queue.html)
 
 ## License
 
