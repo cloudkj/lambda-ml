@@ -13,7 +13,7 @@ enjoyment.
 
 Add the following dependency to your project:
 
-    [lambda-ml "0.1.0-SNAPSHOT"]
+[![Clojars Project](https://img.shields.io/clojars/v/lambda-ml.svg)](https://clojars.org/lambda-ml)
 
 ## Examples
 
