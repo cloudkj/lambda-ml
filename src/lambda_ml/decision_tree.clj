@@ -1,14 +1,6 @@
 (ns lambda-ml.decision-tree
   (:require [lambda-ml.data.binary-tree :as bt]))
 
-(defn gini-impurity
-  [y]
-  (let [total (count y)]
-    (->> (vals (frequencies y))
-         (map #(/ % total))
-         (map #(* % (- 1 %)))
-         (reduce +))))
-
 (defn weighted-cost
   [y1 y2 f]
   (let [n1 (count y1)
