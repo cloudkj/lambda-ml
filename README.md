@@ -17,7 +17,7 @@ Add the following dependency to your project:
 
 ## Examples
 
-### Artificial neural networks
+### Artificial neural network
 
 ```clojure
 (ns example
@@ -51,6 +51,8 @@ Add the following dependency to your project:
 (dbscan euclidean epsilon min-pts data)
 ;;=> {[4 9] 2, [5 8] 2, [7 5] 1, [6 4] 1, [8 4] 1}
 ```
+
+### Decision Trees
 
 ### K-means
 
@@ -127,8 +129,9 @@ Add the following dependency to your project:
 
 ### Algorithms
 
-* [Artificial neural networks](https://cloudkj.github.io/lambda-ml/lambda-ml.neural-network.html)
+* [Artificial neural network](https://cloudkj.github.io/lambda-ml/lambda-ml.neural-network.html)
 * [DBSCAN](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.dbscan.html)
+* Decision tree
 * [K-means](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.k-means.html)
 * [K-nearest neighbors](https://cloudkj.github.io/lambda-ml/lambda-ml.neighborhood.html)
 * [Linear regression](https://cloudkj.github.io/lambda-ml/lambda-ml.regression.html)
@@ -137,9 +140,10 @@ Add the following dependency to your project:
 
 ### Data Structures
 
+* Binary tree
 * [K-d tree](https://cloudkj.github.io/lambda-ml/lambda-ml.data.kd-tree.html)
 * [Priority queue](https://cloudkj.github.io/lambda-ml/lambda-ml.data.priority-queue.html)
 
 ## License
 
-Copyright © 2015-
+Copyright © 2015-2016
