@@ -1,4 +1,5 @@
-(ns lambda-ml.metrics)
+(ns lambda-ml.metrics
+  "Functions that compute measures of cost or gain.")
 
 (defn auc
   "Returns the area under the curve of a given collection of points, using the

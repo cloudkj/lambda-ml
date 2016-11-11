@@ -1,4 +1,5 @@
 (ns lambda-ml.distance
+  "Functions that compute measures of distance between values."
   (:require [lambda-ml.core :as c]))
 
 (defn cosine

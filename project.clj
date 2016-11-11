@@ -3,8 +3,11 @@
   :url "http://github.com/cloudkj/lambda-ml"
   :license {:name "MIT License"
             :url "http://opensource.org/licenses/MIT"}
-  :plugins [[lein-exec "0.3.6"]
+  :plugins [[lein-codox "0.10.1"]
+            [lein-exec "0.3.6"]
             [lein-gorilla "0.3.6"]]
+  :codox {:namespaces [#"^lambda-ml\.(?!examples)"]
+          :source-uri "https://github.com/cloudkj/lambda-ml/blob/master/{filepath}#L{line}"}
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/data.csv "0.1.3"]
                  [org.clojure/math.numeric-tower "0.0.4"]
