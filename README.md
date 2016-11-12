@@ -52,7 +52,7 @@ Add the following dependency to your project:
 ;;=> {[4 9] 2, [5 8] 2, [7 5] 1, [6 4] 1, [8 4] 1}
 ```
 
-### Decision Trees
+### Decision Tree
 
 ### K-means
 
@@ -131,7 +131,7 @@ Add the following dependency to your project:
 
 * [Artificial neural network](https://cloudkj.github.io/lambda-ml/lambda-ml.neural-network.html)
 * [DBSCAN](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.dbscan.html)
-* Decision tree
+* [Decision tree](https://cloudkj.github.io/lambda-ml/lambda-ml.decision-tree.html)
 * [K-means](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.k-means.html)
 * [K-nearest neighbors](https://cloudkj.github.io/lambda-ml/lambda-ml.neighborhood.html)
 * [Linear regression](https://cloudkj.github.io/lambda-ml/lambda-ml.regression.html)
@@ -140,7 +140,7 @@ Add the following dependency to your project:
 
 ### Data Structures
 
-* Binary tree
+* [Binary tree](https://cloudkj.github.io/lambda-ml/lambda-ml.data.binary-tree.html)
 * [K-d tree](https://cloudkj.github.io/lambda-ml/lambda-ml.data.kd-tree.html)
 * [Priority queue](https://cloudkj.github.io/lambda-ml/lambda-ml.data.priority-queue.html)
 
