@@ -10,3 +10,6 @@
   (is (< (Math/abs (- (gini-impurity [:b :b :b :b :b :b]) 0)) 1E-6))
   (is (< (Math/abs (- (gini-impurity [:a :b :b :b :b :b]) 0.277778)) 1E-6))
   (is (< (Math/abs (- (gini-impurity [:a :a :a :b :b :b]) 0.5)) 1E-6)))
+
+(deftest test-mean-squared-error
+  (is (= 0.375 (mean-squared-error [3 -0.5 2 7] [2.5 0.0 2 8]))))

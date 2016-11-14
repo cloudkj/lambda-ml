@@ -8,6 +8,7 @@
 (ns lambda-ml.examples.worksheets.decision-tree
   (:require [lambda-ml.decision-tree :refer :all]
             [lambda-ml.data.binary-tree :as bt]
+            [lambda-ml.metrics :refer :all]
             [gorilla-plot.core :as plot]
             :reload))
 ;; @@
@@ -173,12 +174,14 @@
 ;; <=
 
 ;; @@
-(def model (decision-tree-fit gini-impurity data))
+(def model (make-classification-tree gini-impurity))
+(def fit (decision-tree-fit model data))
 
-(bt/print-tree model)
+(print-decision-tree fit)
 ;; @@
 ;; ->
-;;;  {:decision 0.8, :cost 0.33333334, :feature 3}
+;;; {:cost #function[lambda-ml.metrics/gini-impurity], :prediction #function[lambda-ml.core/mode], :weighted #function[lambda-ml.decision-tree/classification-weighted-cost]}
+;;;  {:decision 2.45, :cost 0.33333334, :feature 2}
 ;;; 	 Iris-setosa
 ;;; 	 {:decision 1.75, :cost 0.11030596, :feature 3}
 ;;; 		 {:decision 4.95, :cost 0.08564815, :feature 2}
@@ -187,14 +190,73 @@
 ;;; 				 Iris-virginica
 ;;; 			 {:decision 1.55, :cost 0.22222222, :feature 3}
 ;;; 				 Iris-virginica
-;;; 				 {:decision 5.45, :cost 0.0, :feature 2}
+;;; 				 {:decision 6.95, :cost 0.0, :feature 0}
 ;;; 					 Iris-versicolor
 ;;; 					 Iris-virginica
 ;;; 		 {:decision 4.85, :cost 0.028985508, :feature 2}
-;;; 			 {:decision 3.1, :cost 0.0, :feature 1}
-;;; 				 Iris-virginica
+;;; 			 {:decision 5.95, :cost 0.0, :feature 0}
 ;;; 				 Iris-versicolor
+;;; 				 Iris-virginica
 ;;; 			 Iris-virginica
+;;; 
+;; <-
+;; =>
+;;; {"type":"html","content":"<span class='clj-nil'>nil</span>","value":"nil"}
+;; <=
+
+;; @@
+(def model (make-regression-tree mean-squared-error))
+(def fit (decision-tree-fit model (map (comp vector #(nth % 1)) data) (map first data)))
+
+(print-decision-tree fit)
+;; @@
+;; ->
+;;; {:cost #function[lambda-ml.metrics/mean-squared-error], :prediction #function[lambda-ml.core/mean], :weighted #function[lambda-ml.decision-tree/regression-weighted-cost]}
+;;;  {:decision 3.35, :cost 0.6369771, :feature 0}
+;;; 	 {:decision 2.55, :cost 0.63437116, :feature 0}
+;;; 		 {:decision 2.1, :cost 0.32540935, :feature 0}
+;;; 			 5.0
+;;; 			 {:decision 2.25, :cost 0.30688888, :feature 0}
+;;; 				 6.066666666666666
+;;; 				 {:decision 2.45, :cost 0.3164881, :feature 0}
+;;; 					 {:decision 2.35, :cost 0.28678572, :feature 0}
+;;; 						 5.325
+;;; 						 5.3
+;;; 					 5.7625
+;;; 		 {:decision 2.95, :cost 0.6862419, :feature 0}
+;;; 			 {:decision 2.75, :cost 0.39609805, :feature 0}
+;;; 				 {:decision 2.65, :cost 0.29815874, :feature 0}
+;;; 					 6.159999999999999
+;;; 					 5.855555555555554
+;;; 				 {:decision 2.85, :cost 0.4223393, :feature 0}
+;;; 					 6.335714285714287
+;;; 					 6.0600000000000005
+;;; 			 {:decision 3.05, :cost 0.8677472, :feature 0}
+;;; 				 6.015384615384614
+;;; 				 {:decision 3.25, :cost 0.8785398, :feature 0}
+;;; 					 {:decision 3.15, :cost 0.96984357, :feature 0}
+;;; 						 5.941666666666667
+;;; 						 5.884615384615383
+;;; 					 6.016666666666667
+;;; 	 {:decision 3.75, :cost 0.5102662, :feature 0}
+;;; 		 {:decision 3.55, :cost 0.33150464, :feature 0}
+;;; 			 {:decision 3.45, :cost 0.2062037, :feature 0}
+;;; 				 5.316666666666666
+;;; 				 5.1499999999999995
+;;; 			 {:decision 3.65, :cost 0.6611111, :feature 0}
+;;; 				 5.6000000000000005
+;;; 				 5.266666666666667
+;;; 		 {:decision 3.85, :cost 0.76666665, :feature 0}
+;;; 			 6.1000000000000005
+;;; 			 {:decision 4.3, :cost 0.032, :feature 0}
+;;; 				 {:decision 4.05, :cost 0.030333333, :feature 0}
+;;; 					 {:decision 3.95, :cost 0.0, :feature 0}
+;;; 						 5.4
+;;; 						 5.8
+;;; 					 {:decision 4.15, :cost 0.0, :feature 0}
+;;; 						 5.2
+;;; 						 5.5
+;;; 				 5.7
 ;;; 
 ;; <-
 ;; =>

@@ -25,6 +25,14 @@
          (map #(* % (- 1 %)))
          (reduce +))))
 
+(defn mean-squared-error
+  "Returns the mean squared error for a seq of predictions."
+  [labels predictions]
+  (->> (map - labels predictions)
+       (map #(* % %))
+       (reduce +)
+       (* (/ 1 (count predictions)))))
+
 (defn roc-curve
   "Returns a sequence of [false positive rate, true positive rate] tuples that
   represent the ROC curve of a classifier."
