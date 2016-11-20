@@ -1,8 +1,15 @@
 (ns lambda-ml.decision-tree-test
   (:require [clojure.test :refer :all]
             [lambda-ml.core :refer :all]
-            [lambda-ml.decision-tree :refer :all]
-            [lambda-ml.metrics :refer :all]))
+            [lambda-ml.decision-tree :refer :all]))
+
+(deftest test-gini-impurity
+  (is (< (Math/abs (- (gini-impurity [:b :b :b :b :b :b]) 0)) 1E-6))
+  (is (< (Math/abs (- (gini-impurity [:a :b :b :b :b :b]) 0.277778)) 1E-6))
+  (is (< (Math/abs (- (gini-impurity [:a :a :a :b :b :b]) 0.5)) 1E-6)))
+
+(deftest test-mean-squared-error
+  (is (= 0.375 (mean-squared-error [3 -0.5 2 7] [2.5 0.0 2 8]))))
 
 (deftest test-classification-weighted-cost
   (is (< (Math/abs (- (classification-weighted-cost [:a :a :a :b :b :b] [:a :b :b :b :b :b]
@@ -11,8 +18,9 @@
          1E-6)))
 
 (deftest test-regression-weighted-cost
-  ;; TODO
-  nil)
+  (is (< (Math/abs (- (regression-weighted-cost [-1 0 3 5] [-2 0 4] mean-squared-error mean)
+                      5.916667))
+         1E-6)))
 
 (deftest test-categorical-partitions
   (let [p0 (categorical-partitions [:foo])
@@ -47,25 +55,11 @@
     (is (eq? (numeric-partitions [3 4 1 2 0]) [0.5 1.5 2.5 3.5]))))
 
 (deftest test-categorical-splitters
-  (let [data [["Sunny" "Hot" "High" "Weak" "No"]
-              ["Sunny" "Hot" "High" "Strong" "No"]
-              ["Overcast" "Hot" "High" "Weak" "Yes"]
-              ["Rain" "Mild" "High" "Weak" "Yes"]
-              ["Rain" "Cool" "Normal" "Weak" "Yes"]
-              ["Rain" "Cool" "Normal" "Strong" "No"]
-              ["Overcast" "Cool" "Normal" "Strong" "Yes"]
-              ["Sunny" "Mild" "High" "Weak" "No"]
-              ["Sunny" "Cool" "Normal" "Weak" "Yes"]
-              ["Rain" "Mild" "Normal" "Weak" "Yes"]
-              ["Sunny" "Mild" "Normal" "Strong" "Yes"]
-              ["Overcast" "Mild" "High" "Strong" "Yes"]
-              ["Overcast" "Hot" "Normal" "Weak" "Yes"]
-              ["Rain" "Mild" "High" "Strong" "No"]]]
-    (is (empty? (splitters [["foo"] ["foo"] ["foo"]] 0)))
-    (is (= (count (splitters data 0)) 3))
-    (is (= (count (splitters data 1)) 3))
-    (is (= (count (splitters data 2)) 1))
-    (is (= (count (splitters data 3)) 1))))
+  (is (empty? (splitters [[:foo]] 0)))
+  (is (empty? (splitters [[:foo] [:foo] [:foo]] 0)))
+  (is (= (count (splitters [[:foo] [:bar]] 0)) 1))
+  (is (= (count (splitters [[:foo] [:bar] [:baz]] 0)) 3))
+  (is (= (count (splitters [[:foo] [:bar] [:baz] [:zap]] 0)) 7)))
 
 (deftest test-numeric-splitters
   (let [data [[64 177]
@@ -116,3 +110,12 @@
         [left right] (vals (group-by splitter data))]
     (is (or (and (= (count left) 10) (= (count right) 4))
             (and (= (count left) 4) (= (count right) 10))))))
+
+(deftest test-classification-tree
+  (let [data [[0 0 0] [0 1 1] [1 0 1] [1 1 0]]
+        model (make-classification-tree gini-impurity)
+        fit (decision-tree-fit model data)]
+    (is (= (first (decision-tree-predict fit [[0 0]])) 0))
+    (is (= (first (decision-tree-predict fit [[0 1]])) 1))
+    (is (= (first (decision-tree-predict fit [[1 0]])) 1))
+    (is (= (first (decision-tree-predict fit [[1 1]])) 0))))

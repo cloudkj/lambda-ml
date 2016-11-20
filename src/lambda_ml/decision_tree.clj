@@ -1,6 +1,27 @@
 (ns lambda-ml.decision-tree
+  "Decision tree learning using the Classification and Regression Trees (CART)
+  algorithm."
   (:require [lambda-ml.core :as c]
             [lambda-ml.data.binary-tree :as bt]))
+
+;; Cost functions
+
+(defn gini-impurity
+  "Returns the Gini impurity of a seq of labels."
+  [labels]
+  (let [total (count labels)]
+    (->> (vals (frequencies labels))
+         (map #(/ % total))
+         (map #(* % (- 1 %)))
+         (reduce +))))
+
+(defn mean-squared-error
+  "Returns the mean squared error for a seq of predictions."
+  [labels predictions]
+  (->> (map - labels predictions)
+       (map #(* % %))
+       (reduce +)
+       (* (/ 1 (count predictions)))))
 
 (defn classification-weighted-cost
   [y1 y2 f g]
@@ -20,6 +41,8 @@
                      (f y1 (repeat n1 (g y1)))))
       (> n2 0) (+ (* (/ n2 (+ n1 n2))
                      (f y2 (repeat n2 (g y2))))))))
+
+;; Tree splitting
 
 (defn categorical-partitions
   "Given a seq of k distinct values, returns the 2^{k-1}-1 possible binary
@@ -52,18 +75,20 @@
   subtree, or false if an example belongs in the right subtree, based on the
   splitting criterion."
   [x i]
-  (let [domain (distinct (map #(nth % i) x))]
-    (cond (number? (first domain)) (->> (numeric-partitions domain)
-                                        (map (fn [s]
-                                               (with-meta
-                                                 (fn [x] (<= (nth x i) s))
-                                                 {:decision (float s)}))))
-          (string? (first domain)) (->> (categorical-partitions domain)
-                                        (map (fn [[s1 s2]]
-                                               (with-meta
-                                                 (fn [x] (contains? s1 (nth x i)))
-                                                 {:decision [s1 s2]}))))
-          :else (throw (IllegalStateException. "Invalid feature type")))))
+  (let [domain (distinct (map #(nth % i) x))
+        val (first domain)]
+    (cond (number? val)      (->> (numeric-partitions domain)
+                                  (map (fn [s]
+                                         (with-meta
+                                           (fn [x] (<= (nth x i) s))
+                                           {:decision (float s)}))))
+          (or (keyword? val)
+              (string? val)) (->> (categorical-partitions domain)
+                                   (map (fn [[s1 s2]]
+                                          (with-meta
+                                            (fn [x] (contains? s1 (nth x i)))
+                                            {:decision [s1 s2]}))))
+          :else (throw (IllegalArgumentException. "Invalid feature type")))))
 
 (defn best-splitter
   "Returns the splitter for the given data that minimizes a weighted cost
@@ -92,6 +117,8 @@
                          :else     b))))
        (first)))
 
+;; API
+
 (defn decision-tree-fit
   "Fits a decision tree to the given training data."
   ([model data]
@@ -99,6 +126,7 @@
   ([model x y]
    (let [{cost :cost prediction :prediction weighted :weighted} model
          weighted (fn [left right] (weighted left right cost prediction))]
+     ;; Stopping criteria
      (->> (if (apply = y)
             (bt/make-tree (prediction y))
             (let [splitter (best-splitter weighted x y)]
