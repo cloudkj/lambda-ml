@@ -36,4 +36,4 @@
   f, represented as a map from cluster id to a collection of points, at each
   iteration of k-means."
   [k f points]
-  (k-means-seq k f points (c/sample points k)))
+  (k-means-seq k f points (c/sample-without-replacement points k)))

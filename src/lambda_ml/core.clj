@@ -30,16 +30,29 @@
         coll (shuffle coll)]
     (partition size size [] coll)))
 
-(defn sample
+(defn sample-with-replacement
+  "Returns n randomly selected elements, with replacement, from coll."
+  ([coll n]
+   (sample-with-replacement coll n (list)))
+  ([coll n s]
+   (cond (<= n 0)             s
+         (not (vector? coll)) (sample-with-replacement (vec coll) n s)
+         :else
+         (let [index (rand-int (count coll))]
+           (sample-with-replacement coll
+                                    (dec n)
+                                    (conj s (nth coll index)))))))
+
+(defn sample-without-replacement
   "Returns n randomly selected elements, without replacement, from coll."
   ([coll n]
-   (sample coll n (list)))
+   (sample-without-replacement coll n (list)))
   ([coll n s]
-   (if-not (vector? coll)
-     (sample (vec coll) n s)
-     (let [index (rand-int (count coll))]
-       (if (or (<= n 0) (empty? coll))
-         s
-         (sample (subvec (assoc coll index (first coll)) 1)
-                 (dec n)
-                 (conj s (nth coll index))))))))
+   (cond (<= n 0)             s
+         (empty? coll)        s
+         (not (vector? coll)) (sample-without-replacement (vec coll) n s)
+         :else
+         (let [index (rand-int (count coll))]
+           (sample-without-replacement (subvec (assoc coll index (first coll)) 1)
+                                       (dec n)
+                                       (conj s (nth coll index)))))))

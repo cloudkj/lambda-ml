@@ -2,9 +2,15 @@
   (:require [clojure.test :refer :all]
             [lambda-ml.core :refer :all]))
 
-(deftest test-random-sample
+(deftest test-sample-with-replacement
   (doseq [k (range 5 11)]
-    (let [s (sample (range 10) k)]
+    (let [s (sample-with-replacement (range 10) k)]
+      (is (= k (count s)))
+      (is (every? #(< % 10) s)))))
+
+(deftest test-sample-without-replacement
+  (doseq [k (range 5 11)]
+    (let [s (sample-without-replacement (range 10) k)]
       (is (= k (count s)))
       (is (= k (count (distinct s))))
       (is (every? #(< % 10) s)))))
