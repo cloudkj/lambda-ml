@@ -2,6 +2,10 @@
   (:require [clojure.test :refer :all]
             [lambda-ml.core :refer :all]))
 
+(deftest test-median
+  (is (= (median [5 2 4 1 3]) 3))
+  (is (= (median [7 0 2 3]) (/ 5 2))))
+
 (deftest test-sample-with-replacement
   (doseq [k (range 5 11)]
     (let [s (sample-with-replacement (range 10) k)]

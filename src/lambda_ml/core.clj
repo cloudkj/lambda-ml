@@ -15,6 +15,15 @@
   [coll]
   (/ (reduce + coll) (count coll)))
 
+(defn median
+  [coll]
+  (let [sorted (sort coll)
+        c (count coll)
+        mid (quot c 2)]
+    (if (odd? c)
+      (nth sorted mid)
+      (/ (+ (nth sorted (dec mid)) (nth sorted mid)) 2))))
+
 (defn mode
   [coll]
   (first (apply max-key second (frequencies coll))))
