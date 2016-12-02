@@ -26,7 +26,8 @@ Add the following dependency to your project:
 (def data [[0 0 0] [0 1 1] [1 0 1] [1 1 0]])
 (def hidden-layers [3])
 (def alpha 0.5)
-(def model (make-neural-network hidden-layers alpha))
+(def lambda 0.001)
+(def model (make-neural-network hidden-layers alpha lambda))
 
 (def fit
   (-> #(neural-network-fit % (map butlast data) (map (comp vector last) data))
@@ -59,8 +60,10 @@ Add the following dependency to your project:
   (:require [lambda-ml.decision-tree :refer :all]
             [lambda-ml.metrics :refer :all]))
 
+(def min-split 2)
+(def min-leaf 1)
 (def data [[0 0 0] [0 1 1] [1 0 1] [1 1 0]])
-(def model (make-classification-tree gini-impurity))
+(def model (make-classification-tree gini-impurity min-split min-leaf))
 (def fit (decision-tree-fit model data))
 
 (decision-tree-predict fit (map butlast data))
@@ -106,8 +109,8 @@ Add the following dependency to your project:
 (def model (make-linear-regression 0.01 0 5000))
 (def fit (regression-fit model data))
 
-(fit :parameters)
-;;=> (0.26315789473683826 0.6052631578947385)
+(regression-predict fit (map #(take 1 %) data))
+;;=> (-0.9473684210526243 0.8684210526315812 2.0789473684210513)
 ```
 
 ### Logistic regression
