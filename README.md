@@ -9,6 +9,30 @@ enjoyment.
 
 * [API Docs](https://cloudkj.github.io/lambda-ml/)
 
+### Algorithms
+
+#### Supervised Learning
+
+* [Artificial neural network](https://cloudkj.github.io/lambda-ml/lambda-ml.neural-network.html)
+* [Decision tree](https://cloudkj.github.io/lambda-ml/lambda-ml.decision-tree.html)
+* [Ensemble](https://cloudkj.github.io/lambda-ml/lambda-ml.ensemble.html)
+* [K-nearest neighbors](https://cloudkj.github.io/lambda-ml/lambda-ml.neighborhood.html)
+* [Linear regression](https://cloudkj.github.io/lambda-ml/lambda-ml.regression.html)
+* [Logistic regression](https://cloudkj.github.io/lambda-ml/lambda-ml.regression.html)
+* [Naive Bayes](https://cloudkj.github.io/lambda-ml/lambda-ml.naive-bayes.html)
+* [Random Forest](https://cloudkj.github.io/lambda-ml/lambda-ml.ensemble.html)
+
+#### Unsupervised Learning
+
+* [DBSCAN](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.dbscan.html)
+* [K-means](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.k-means.html)
+
+### Data Structures
+
+* [Binary tree](https://cloudkj.github.io/lambda-ml/lambda-ml.data.binary-tree.html)
+* [K-d tree](https://cloudkj.github.io/lambda-ml/lambda-ml.data.kd-tree.html)
+* [Priority queue](https://cloudkj.github.io/lambda-ml/lambda-ml.data.priority-queue.html)
+
 ## Installation
 
 Add the following dependency to your project:
@@ -20,8 +44,7 @@ Add the following dependency to your project:
 ### Artificial neural network
 
 ```clojure
-(ns example
-  (:require [lambda-ml.neural-network :refer :all]))
+(ns example (:require [lambda-ml.neural-network :refer :all]))
 
 (def data [[0 0 0] [0 1 1] [1 0 1] [1 1 0]])
 (def hidden-layers [3])
@@ -41,9 +64,8 @@ Add the following dependency to your project:
 ### DBSCAN
 
 ```clojure
-(ns example
- (:require [lambda-ml.clustering.dbscan :refer :all]
-           [lambda-ml.distance :refer :all]))
+(ns example (:require [lambda-ml.clustering.dbscan :refer :all]
+                      [lambda-ml.distance :refer :all]))
 
 (def epsilon 4.0)
 (def min-pts 2)
@@ -56,9 +78,8 @@ Add the following dependency to your project:
 ### Decision Tree
 
 ```clojure
-(ns example
-  (:require [lambda-ml.decision-tree :refer :all]
-            [lambda-ml.metrics :refer :all]))
+(ns example (:require [lambda-ml.decision-tree :refer :all]
+                      [lambda-ml.metrics :refer :all]))
 
 (def min-split 2)
 (def min-leaf 1)
@@ -73,9 +94,8 @@ Add the following dependency to your project:
 ### K-means
 
 ```clojure
-(ns example
- (:require [lambda-ml.clustering.k-means :refer :all]
-           [lambda-ml.distance :refer :all]))
+(ns example (:require [lambda-ml.clustering.k-means :refer :all]
+                      [lambda-ml.distance :refer :all]))
 
 (def k 2)
 (def iters 100)
@@ -88,9 +108,8 @@ Add the following dependency to your project:
 ### K-nearest neighbors
 
 ```clojure
-(ns example
- (:require [lambda-ml.neighborhood :refer :all]
-           [lambda-ml.distance :refer :all]))
+(ns example (:require [lambda-ml.neighborhood :refer :all]
+                      [lambda-ml.distance :refer :all]))
 
 (def data [[2 3] [5 4] [9 6] [4 7] [8 1] [7 2]])
 (def knn (make-knn euclidean data))
@@ -102,8 +121,7 @@ Add the following dependency to your project:
 ### Linear regression
 
 ```clojure
-(ns example
- (:require [lambda-ml.regression :refer :all]))
+(ns example (:require [lambda-ml.regression :refer :all]))
 
 (def data [[-2 -1] [1 1] [3 2]])
 (def model (make-linear-regression 0.01 0 5000))
@@ -116,8 +134,7 @@ Add the following dependency to your project:
 ### Logistic regression
 
 ```clojure
-(ns example
- (:require [lambda-ml.regression :refer :all]))
+(ns example (:require [lambda-ml.regression :refer :all]))
 
 (def data [[0.50 0] [0.75 0] [1.00 0] [1.25 0] [1.50 0] [1.75 0] [1.75 1] [2.00 0] [2.25 1] [2.50 0] [2.75 1] [3.00 0] [3.25 1] [3.50 0] [4.00 1] [4.25 1] [4.50 1] [4.75 1] [5.00 1] [5.50 1]])
 (def model (make-logistic-regression 0.1 0 10000))
@@ -130,8 +147,7 @@ Add the following dependency to your project:
 ### Naive Bayes
 
 ```clojure
-(ns example
- (:require [lambda-ml.naive-bayes :refer :all]))
+(ns example (:require [lambda-ml.naive-bayes :refer :all]))
 
 (def x [[6.0 180 12] [5.92 190 11] [5.58 170 12] [5.92 165 10] [5.0 100 6] [5.5 150 8] [5.42 130 7] [5.75 150 9]])
 (def y [:male :male :male :male :female :female :female :female])
@@ -140,25 +156,6 @@ Add the following dependency to your project:
 (naive-bayes-predict model [[6.0 130 8]])
 ;;=> (:female)
 ```
-
-## Contents
-
-### Algorithms
-
-* [Artificial neural network](https://cloudkj.github.io/lambda-ml/lambda-ml.neural-network.html)
-* [DBSCAN](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.dbscan.html)
-* [Decision tree](https://cloudkj.github.io/lambda-ml/lambda-ml.decision-tree.html)
-* [K-means](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.k-means.html)
-* [K-nearest neighbors](https://cloudkj.github.io/lambda-ml/lambda-ml.neighborhood.html)
-* [Linear regression](https://cloudkj.github.io/lambda-ml/lambda-ml.regression.html)
-* [Logistic regression](https://cloudkj.github.io/lambda-ml/lambda-ml.regression.html)
-* [Naive Bayes](https://cloudkj.github.io/lambda-ml/lambda-ml.naive-bayes.html)
-
-### Data Structures
-
-* [Binary tree](https://cloudkj.github.io/lambda-ml/lambda-ml.data.binary-tree.html)
-* [K-d tree](https://cloudkj.github.io/lambda-ml/lambda-ml.data.kd-tree.html)
-* [Priority queue](https://cloudkj.github.io/lambda-ml/lambda-ml.data.priority-queue.html)
 
 ## License
 
