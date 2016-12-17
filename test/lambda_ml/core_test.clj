@@ -13,6 +13,9 @@
       (is (every? #(< % 10) s)))))
 
 (deftest test-sample-without-replacement
+  (is (= 10 (count (sample-without-replacement (range 10) 10))))
+  (is (= 10 (count (sample-without-replacement (range 10) 100))))
+  (is (= 10 (count (sample-without-replacement (range 10) 1000))))
   (doseq [k (range 5 11)]
     (let [s (sample-without-replacement (range 10) k)]
       (is (= k (count s)))

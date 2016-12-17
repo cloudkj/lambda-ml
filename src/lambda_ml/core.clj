@@ -59,6 +59,7 @@
   ([coll n s]
    (cond (<= n 0)             s
          (empty? coll)        s
+         (>= n (count coll))  coll
          (not (vector? coll)) (sample-without-replacement (vec coll) n s)
          :else
          (let [index (rand-int (count coll))]

@@ -84,41 +84,46 @@
                                            {:decision (float s)}))))
           (or (keyword? val)
               (string? val)) (->> (categorical-partitions domain)
-                                   (map (fn [[s1 s2]]
-                                          (with-meta
-                                            (fn [x] (contains? s1 (nth x i)))
-                                            {:decision [s1 s2]}))))
+                                  (map (fn [[s1 s2]]
+                                         (with-meta
+                                           (fn [x] (contains? s1 (nth x i)))
+                                           {:decision [s1 s2]}))))
           :else (throw (IllegalArgumentException. "Invalid feature type")))))
 
 (defn best-splitter
   "Returns the splitter for the given data that minimizes a weighted cost
-  function f, or returns nil if no splitter exists."
-  [f min-leaf x y]
-  (->> (for [i (range (count (first x)))]
-         ;; Find best splitter for feature i
-         (let [s (map (fn [splitter]
-                        (let [data (map #(conj (vec %1) %2) x y)
-                              [left right] (vals (group-by splitter data))]
-                          ;; Either split would have fewer observations than required
-                          (if (or (< (count left) min-leaf) (< (count right) min-leaf))
-                            [nil Double/MAX_VALUE i]
-                            (let [cost (f (map last left) (map last right))
-                                  ;; Add metadata to splitter
-                                  splitter (vary-meta splitter merge {:cost (float cost) :feature i})]
-                              [splitter cost i]))))
-                      (splitters x i))]
-           (if (empty? s)
-             [nil Double/MAX_VALUE i]
-             (apply min-key second s))))
-       ;; Find best splitter amongst all features
-       (reduce (fn [a b]
-                 (let [[_ c1 i1] a [_ c2 i2] b]
-                   (cond (< c1 c2) a
-                         ;; To match the CART algorithm, break ties in cost by
-                         ;; choosing splitter for feature with lower index
-                         (= c1 c2) (if (< i1 i2) a b)
-                         :else     b))))
-       (first)))
+  function, or returns nil if no splitter exists."
+  [model x y]
+  (let [{cost :cost prediction :prediction weighted :weighted
+         min-leaf :min-leaf max-features :max-features} model
+         ;; Feature bagging - sample a subset of features to split on
+         features (-> (range (count (first x)))
+                      (c/sample-without-replacement max-features))
+         data (map #(conj (vec %1) %2) x y)]
+    (->> (for [i features]
+           (let [no-splitter [nil Double/MAX_VALUE i]]
+             ;; Find best splitter for feature i
+             (->> (splitters x i)
+                  (map (fn [splitter]
+                         (let [[left right] (vals (group-by splitter data))]
+                           ;; Either split would have fewer observations than required
+                           (cond (< (count left)  min-leaf) no-splitter
+                                 (< (count right) min-leaf) no-splitter
+                                 :else (let [cost (weighted (map last left) (map last right) cost prediction)
+                                             ;; Add metadata to splitter
+                                             splitter (vary-meta splitter merge {:cost (float cost) :feature i})]
+                                         [splitter cost i])))))
+                  (#(if (empty? %) (list no-splitter) %))
+                  (apply min-key second))))
+         ;; Find best splitter amongst all features
+         (reduce (fn [a b]
+                   (let [[_ c1 i1] a [_ c2 i2] b]
+                     (cond (< c1 c2) a
+                           ;; To match the CART algorithm, break ties in cost by
+                           ;; choosing splitter for feature with lower index
+                           (= c1 c2) (if (< i1 i2) a b)
+                           :else     b))))
+         (first))))
 
 ;; API
 
@@ -128,7 +133,7 @@
    (decision-tree-fit model (map butlast data) (map last data)))
   ([model x y]
    (let [{cost :cost prediction :prediction weighted :weighted
-          min-split :min-split min-leaf :min-leaf} model
+          min-split :min-split min-leaf :min-leaf max-features :max-features} model
          weighted (fn [left right] (weighted left right cost prediction))]
      (->> (cond
             ;; Fewer observations than required to split a node
@@ -136,7 +141,7 @@
             ;; All observed labels are equivalent
             (apply = y)             (bt/make-tree (prediction y))
             :else
-            (let [splitter (best-splitter weighted min-leaf x y)]
+            (let [splitter (best-splitter model x y)]
               (if (nil? splitter)
                 (bt/make-tree (prediction y))
                 (let [data  (map #(conj (vec %1) %2) x y)
@@ -169,14 +174,16 @@
 
 (defn make-classification-tree
   "Returns a classification decision tree model using the given cost function."
-  [cost min-split min-leaf]
+  [cost min-split min-leaf max-features]
   {:cost cost :prediction c/mode :weighted classification-weighted-cost
    :min-split min-split
-   :min-leaf min-leaf})
+   :min-leaf min-leaf
+   :max-features max-features})
 
 (defn make-regression-tree
   "Returns a regression decision tree model using the given cost function."
-  [cost min-split min-leaf]
+  [cost min-split min-leaf max-features]
   {:cost cost :prediction c/mean :weighted regression-weighted-cost
    :min-split min-split
-   :min-leaf min-leaf})
+   :min-leaf min-leaf
+   :max-features max-features})
