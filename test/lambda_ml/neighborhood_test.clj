@@ -135,29 +135,3 @@
                  (nearest-neighbors-fit data))]
     (is (= (first (nearest-neighbors-predict fit1 [[48 142000]])) 264))
     (is (= (first (nearest-neighbors-predict fit3 [[48 142000]])) (/ 542 3)))))
-
-(deftest test-search
-  (let [points {:SanFrancisco [37.759859 -122.437134]
-                :Berkeley     [37.864012 -122.277832]
-                :PaloAlto     [37.444335 -122.156982]
-                :MountainView [37.387617 -122.060852]
-                :SanJose      [37.330857 -121.887817]
-                :SantaCruz    [36.971838 -122.019653]}
-        locations (map-invert points)
-        search (make-search d/haversine (vals points))]
-    (is (= (set (map locations (search 1 (points :MountainView))))
-           #{:MountainView}))
-    (is (= (set (map locations (search 2 (points :MountainView))))
-           #{:MountainView}))
-    (is (= (set (map locations (search 4 (points :MountainView))))
-           #{:MountainView}))
-    (is (= (set (map locations (search 8 (points :MountainView))))
-           #{:MountainView :PaloAlto}))
-    (is (= (set (map locations (search 16 (points :MountainView))))
-           #{:MountainView :PaloAlto :SanJose}))
-    (is (= (set (map locations (search 30 (points :MountainView))))
-           #{:MountainView :PaloAlto :SanJose :SantaCruz}))
-    (is (= (set (map locations (search 35 (points :MountainView))))
-           #{:MountainView :PaloAlto :SanJose :SantaCruz :SanFrancisco}))
-    (is (= (set (map locations (search 50 (points :MountainView))))
-           #{:MountainView :PaloAlto :SanJose :SantaCruz :SanFrancisco :Berkeley}))))

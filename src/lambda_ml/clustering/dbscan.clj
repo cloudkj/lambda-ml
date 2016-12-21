@@ -1,13 +1,41 @@
 (ns lambda-ml.clustering.dbscan
   (:require [clojure.set :as set]
-            [lambda-ml.neighborhood :as n]))
+            [lambda-ml.data.binary-tree :as bt]
+            [lambda-ml.data.kd-tree :as kd]))
+
+(defn make-proximity-search
+  "Given a distance function f and a coll of points, returns a function that,
+  given a distance and a query point, returns a sequence of all points that are
+  within the given distance of the query point."
+  [f points]
+  (let [dims (count (first points))
+        t (kd/make-tree dims points)]
+    (fn search
+      ([dist query]
+       (search dist query t 0 (list)))
+      ([dist query tree depth cand]
+       (if (nil? tree)
+         cand
+         (let [[node left right] ((juxt bt/get-value bt/get-left bt/get-right) tree)
+               dim (mod depth dims)
+               [near far] (if (<= (nth query dim) (nth node dim)) [left right] [right left])]
+           (cond->> cand
+             ;; Add current node if it's within proximity
+             (<= (f query node) dist)
+             (cons node)
+             ;; Explore near branch
+             true
+             (search dist query near (inc depth))
+             ;; Optionally, explore far branch
+             (< (f query node dim) dist)
+             (search dist query far (inc depth)))))))))
 
 (defn dbscan
   "Returns a clustering of points represented as a map from cluster id to a set
   of points, using the epsilon parameter for neighborhood lookups and forming
   clusters with at least min-pts density."
   [f epsilon min-pts points]
-  (let [search (n/make-search f points)]
+  (let [search (make-proximity-search f points)]
     (loop [unvisited points
            cluster-id 0
            visited #{}
