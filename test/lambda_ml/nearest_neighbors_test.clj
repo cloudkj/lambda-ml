@@ -1,7 +1,7 @@
-(ns lambda-ml.neighborhood-test
+(ns lambda-ml.nearest-neighbors-test
   (:require [clojure.test :refer :all]
             [clojure.set :refer :all]
-            [lambda-ml.neighborhood :refer :all]
+            [lambda-ml.nearest-neighbors :refer :all]
             [lambda-ml.distance :as d]
             [lambda-ml.data.priority-queue :as pq]))
 

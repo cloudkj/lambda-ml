@@ -1,4 +1,4 @@
-(ns lambda-ml.neighborhood
+(ns lambda-ml.nearest-neighbors
   (:require [lambda-ml.core :refer :all]
             [lambda-ml.data.binary-tree :as bt]
             [lambda-ml.data.kd-tree :as kd]

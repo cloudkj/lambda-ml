@@ -22,7 +22,7 @@
 
 (defn add-bagging-estimator
   "Adds a base estimator to an ensemble, where each estimator is defined by fit
-  and predict functions used for training on and predicting from the provided
+  and predict functions used for training on then predicting from the provided
   model, respectively."
   [ensemble model fit predict]
   (->> [model fit predict]
