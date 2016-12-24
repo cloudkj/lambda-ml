@@ -1,4 +1,15 @@
 (ns lambda-ml.nearest-neighbors
+  "Classification and regression using the k-nearest neighbors algorithm.
+
+  Example usage:
+  ```
+  (def data [[2 3] [5 4] [9 6] [4 7] [8 1] [7 2]])
+  (def fit
+    (let [k 1]
+      (-> (make-nearest-neighbors-regressor k lambda-ml.distance/euclidean)
+          (nearest-neighbors-fit data))))
+  (nearest-neighbors-predict fit (map butlast data))
+  ```"
   (:require [lambda-ml.core :refer :all]
             [lambda-ml.data.binary-tree :as bt]
             [lambda-ml.data.kd-tree :as kd]

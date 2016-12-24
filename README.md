@@ -15,20 +15,18 @@ Add the following dependency to your project:
 
 * [API Docs](https://cloudkj.github.io/lambda-ml/)
 
-### Algorithms
-
-#### Supervised Learning
+### Supervised Learning Algorithms
 
 * [Artificial neural network](https://cloudkj.github.io/lambda-ml/lambda-ml.neural-network.html)
 * [Decision tree](https://cloudkj.github.io/lambda-ml/lambda-ml.decision-tree.html)
 * [Ensemble methods](https://cloudkj.github.io/lambda-ml/lambda-ml.ensemble.html)
-* [K-nearest neighbors](https://cloudkj.github.io/lambda-ml/lambda-ml.neighborhood.html)
+* [K-nearest neighbors](https://cloudkj.github.io/lambda-ml/lambda-ml.nearest-neighbors.html)
 * [Linear regression](https://cloudkj.github.io/lambda-ml/lambda-ml.regression.html)
 * [Logistic regression](https://cloudkj.github.io/lambda-ml/lambda-ml.regression.html)
 * [Naive Bayes](https://cloudkj.github.io/lambda-ml/lambda-ml.naive-bayes.html)
 * [Random forest](https://cloudkj.github.io/lambda-ml/lambda-ml.random-forest.html)
 
-#### Unsupervised Learning
+### Unsupervised Learning Algorithms
 
 * [DBSCAN](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.dbscan.html)
 * [K-means](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.k-means.html)
@@ -40,35 +38,6 @@ Add the following dependency to your project:
 * [Priority queue](https://cloudkj.github.io/lambda-ml/lambda-ml.data.priority-queue.html)
 
 ## Examples
-
-### Decision Tree
-
-```clojure
-(ns example (:require [lambda-ml.decision-tree :refer :all]
-                      [lambda-ml.metrics :refer :all]))
-
-(def min-split 2)
-(def min-leaf 1)
-(def data [[0 0 0] [0 1 1] [1 0 1] [1 1 0]])
-(def model (make-classification-tree gini-impurity min-split min-leaf))
-(def fit (decision-tree-fit model data))
-
-(decision-tree-predict fit (map butlast data))
-;;=> (0 1 1 0)
-```
-
-### K-nearest neighbors
-
-```clojure
-(ns example (:require [lambda-ml.neighborhood :refer :all]
-                      [lambda-ml.distance :refer :all]))
-
-(def data [[2 3] [5 4] [9 6] [4 7] [8 1] [7 2]])
-(def knn (make-knn euclidean data))
-
-(knn 3 [8 1])
-;;=> [[0 [8 1]] [2 [7 2]] [18 [5 4]]]
-```
 
 ### Linear regression
 

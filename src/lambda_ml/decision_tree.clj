@@ -1,6 +1,19 @@
 (ns lambda-ml.decision-tree
   "Decision tree learning using the Classification and Regression Trees (CART)
-  algorithm."
+  algorithm.
+
+  Example usage;
+  ```
+  (def data [[0 0 0] [0 1 1] [1 0 1] [1 1 0]])
+  (def fit
+    (let [min-split 2
+          min-leaf 1
+          max-features 2]
+      (-> (make-classification-tree gini-impurity min-split min-leaf max-features)
+          (decision-tree-fit data))))
+  (decision-tree-predict fit (map butlast data))
+  ;;=> (0 1 1 0)
+  ```"
   (:require [lambda-ml.core :as c]
             [lambda-ml.data.binary-tree :as bt]))
 
