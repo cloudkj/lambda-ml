@@ -6,7 +6,8 @@
   :plugins [[lein-codox "0.10.1"]
             [lein-exec "0.3.6"]
             [lein-gorilla "0.3.6"]]
-  :codox {:namespaces [#"^lambda-ml\.(?!examples)"]
+  :codox {:metadata {:doc/format :markdown}
+          :namespaces [#"^lambda-ml\.(?!examples)"]
           :source-uri "https://github.com/cloudkj/lambda-ml/blob/master/{filepath}#L{line}"}
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/data.csv "0.1.3"]
