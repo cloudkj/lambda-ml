@@ -1,4 +1,34 @@
 (ns lambda-ml.regression
+  "Generalized linear model learning for two of the more popular techniques,
+  linear regression and logistic regression.
+
+  Linear regression example usage:
+  ```
+  (def data [[-2 -1] [1 1] [3 2]])
+  (def fit
+  (let [alpha 0.01
+        lambda 0
+        iters 5000]
+    (-> (make-linear-regression alpha lambda iters)
+        (regression-fit data))))
+  (regression-predict fit (map butlast data))
+  ;;=> (-0.9473684210526243 0.8684210526315812 2.0789473684210513)
+  ```
+
+  Logistic regression example usage:
+  ```
+  (def data [[4.0 1] [1.75 0] [4.25 1] [2.75 1] [5.0 1] [0.5 0] [1.0 0] [1.5 0]
+             [5.5 1] [2.5 0] [2.0 0] [3.5 0] [1.75 1] [3.0 0] [4.75 1] [1.25 0]
+             [4.5 1] [0.75 0] [3.25 1] [2.25 1]])
+  (def fit
+    (let [alpha 0.1
+          lambda 0
+          iters 10000]
+      (-> (make-logistic-regression alpha lambda iters)
+          (regression-fit data))))
+  (regression-predict fit (take 3 (map butlast data)))
+  ;;=> (0.8744474608195764 0.19083657134699333 0.9102776017566352)
+  ```"
   (:require [lambda-ml.core :as c]
             [clojure.math.numeric-tower :refer :all]))
 

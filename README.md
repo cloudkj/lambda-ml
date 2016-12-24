@@ -39,32 +39,6 @@ Add the following dependency to your project:
 
 ## Examples
 
-### Linear regression
-
-```clojure
-(ns example (:require [lambda-ml.regression :refer :all]))
-
-(def data [[-2 -1] [1 1] [3 2]])
-(def model (make-linear-regression 0.01 0 5000))
-(def fit (regression-fit model data))
-
-(regression-predict fit (map #(take 1 %) data))
-;;=> (-0.9473684210526243 0.8684210526315812 2.0789473684210513)
-```
-
-### Logistic regression
-
-```clojure
-(ns example (:require [lambda-ml.regression :refer :all]))
-
-(def data [[0.50 0] [0.75 0] [1.00 0] [1.25 0] [1.50 0] [1.75 0] [1.75 1] [2.00 0] [2.25 1] [2.50 0] [2.75 1] [3.00 0] [3.25 1] [3.50 0] [4.00 1] [4.25 1] [4.50 1] [4.75 1] [5.00 1] [5.50 1]])
-(def model (make-logistic-regression 0.1 0 10000))
-(def fit (regression-fit model data))
-
-(fit :parameters)
-;;=> (-4.077712444728931 1.5046450944762417)
-```
-
 ## License
 
 Copyright © 2015-2016
