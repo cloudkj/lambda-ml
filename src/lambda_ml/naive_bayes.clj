@@ -1,7 +1,18 @@
 (ns lambda-ml.naive-bayes
-  (require [clojure.math.numeric-tower :refer :all]))
+  "Naive Bayes probabilistic model learning.
 
-;; Naive Bayes
+  Example usage:
+  ```
+  (def data [[6.0 180 12 :male] [5.92 190 11 :male] [5.58 170 12 :male]
+             [5.92 165 10 :male] [5.0 100 6 :female] [5.5 150 8 :female]
+             [5.42 130 7 :female] [5.75 150 9 :female]])
+  (def fit
+    (-> (make-naive-bayes)
+        (naive-bayes-fit data)))
+  (naive-bayes-predict fit [[6.0 130 8]])
+  ;;=> (:female)
+  ```"
+  (require [clojure.math.numeric-tower :refer :all]))
 
 (defn gaussian
   [x mean var]
