@@ -6,11 +6,11 @@
   ```
   (def data [[-2 -1] [1 1] [3 2]])
   (def fit
-  (let [alpha 0.01
-        lambda 0
-        iters 5000]
-    (-> (make-linear-regression alpha lambda iters)
-        (regression-fit data))))
+    (let [alpha 0.01
+          lambda 0
+          iters 5000]
+      (-> (make-linear-regression alpha lambda iters)
+          (regression-fit data))))
   (regression-predict fit (map butlast data))
   ;;=> (-0.9473684210526243 0.8684210526315812 2.0789473684210513)
   ```
