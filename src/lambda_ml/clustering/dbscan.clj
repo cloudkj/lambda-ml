@@ -1,4 +1,14 @@
 (ns lambda-ml.clustering.dbscan
+  "Density-based clustering with DBSCAN.
+
+  Example usage:
+  ```
+  (def data [[2 10] [2 5] [8 4] [5 8] [7 5] [6 4] [1 2] [4 9]])
+  (let [epsilon 4.0
+        min-pts 2]
+    (dbscan lambda-ml.distance/euclidean epsilon min-pts data))
+  ;;=> {[8 4] 1, [6 4] 1, [7 5] 1, [5 8] 2, [4 9] 2}
+  ```"
   (:require [clojure.set :as set]
             [lambda-ml.data.binary-tree :as bt]
             [lambda-ml.data.kd-tree :as kd]))

@@ -1,4 +1,14 @@
 (ns lambda-ml.clustering.k-means
+  "K-means clustering.
+
+  Example usage:
+  ```
+  (def data [[1 1] [1.5 2] [3 4] [5 7] [3.5 5] [4.5 5] [3.5 4.5]])
+  (let [k 2]
+    (-> (k-means k lambda-ml.distance/euclidean data)
+        (nth 100)))
+  ;;=> {0 ([3.5 4.5] [4.5 5] [3.5 5] [5 7] [3 4]), 1 ([1.5 2] [1 1])}
+  ```"
   (:require [lambda-ml.core :as c]))
 
 (defn assign-clusters

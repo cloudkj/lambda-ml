@@ -1,4 +1,19 @@
 (ns lambda-ml.neural-network
+  "Multilayer perceptron neural network learning using backpropagation.
+
+  Example usage:
+  ```
+  (def data [[0 0 [0]] [0 1 [1]] [1 0 [1]] [1 1 [0]]])
+  (def fit
+    (let [hidden-layers [3]
+          alpha 0.5
+          lambda 0.001]
+      (-> #(neural-network-fit % data)
+          (iterate (make-neural-network hidden-layers alpha lambda))
+          (nth 5000))))
+  (neural-network-predict fit (map butlast data))
+  ;;=> [[0.04262340225834812] [0.9582632706756758] [0.9581124103456861] [0.04103544440312673]]
+  ```"
   (:require [lambda-ml.core :as c]
             [clojure.core.matrix :as m]))
 

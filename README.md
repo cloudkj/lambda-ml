@@ -41,40 +41,6 @@ Add the following dependency to your project:
 
 ## Examples
 
-### Artificial neural network
-
-```clojure
-(ns example (:require [lambda-ml.neural-network :refer :all]))
-
-(def data [[0 0 0] [0 1 1] [1 0 1] [1 1 0]])
-(def hidden-layers [3])
-(def alpha 0.5)
-(def lambda 0.001)
-(def model (make-neural-network hidden-layers alpha lambda))
-
-(def fit
-  (-> #(neural-network-fit % (map butlast data) (map (comp vector last) data))
-      (iterate model)
-      (nth 5000)))
-
-(neural-network-predict fit (map butlast data))
-;;=> ((0.018947665113895507) (0.9768421723034613) (0.9770467568718264) (0.03108874342427228))
-```
-
-### DBSCAN
-
-```clojure
-(ns example (:require [lambda-ml.clustering.dbscan :refer :all]
-                      [lambda-ml.distance :refer :all]))
-
-(def epsilon 4.0)
-(def min-pts 2)
-(def data [[2 10] [2 5] [8 4] [5 8] [7 5] [6 4] [1 2] [4 9]])
-
-(dbscan euclidean epsilon min-pts data)
-;;=> {[4 9] 2, [5 8] 2, [7 5] 1, [6 4] 1, [8 4] 1}
-```
-
 ### Decision Tree
 
 ```clojure
@@ -89,20 +55,6 @@ Add the following dependency to your project:
 
 (decision-tree-predict fit (map butlast data))
 ;;=> (0 1 1 0)
-```
-
-### K-means
-
-```clojure
-(ns example (:require [lambda-ml.clustering.k-means :refer :all]
-                      [lambda-ml.distance :refer :all]))
-
-(def k 2)
-(def iters 100)
-(def data [[1 1] [1.5 2] [3 4] [5 7] [3.5 5] [4.5 5] [3.5 4.5]])
-
-(nth (k-means k euclidean data) iters)
-;;=> {0 ([3.5 4.5] [4.5 5] [3.5 5] [5 7] [3 4]), 1 ([1.5 2] [1 1])}
 ```
 
 ### K-nearest neighbors
