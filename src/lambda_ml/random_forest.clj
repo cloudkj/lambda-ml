@@ -1,4 +1,19 @@
 (ns lambda-ml.random-forest
+  "Random forest classification and regression learning.
+
+  Example usage:
+  ```
+  (def data [[0 0 0] [0 1 1] [1 0 1] [1 1 0]])
+  (def fit
+    (let [n 1001
+          min-split 2
+          min-leaf 1
+          max-features 2]
+      (-> (make-random-forest-classifier n min-split min-leaf max-features)
+          (random-forest-fit data))))
+  (random-forest-predict fit (map butlast data))
+  ;;=> (0 1 1 0)
+  ```"
   (:require [lambda-ml.decision-tree :as dt]
             [lambda-ml.ensemble :as e]))
 

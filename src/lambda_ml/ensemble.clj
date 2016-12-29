@@ -1,4 +1,23 @@
 (ns lambda-ml.ensemble
+  "Ensemble learning methods.
+
+  Example usage:
+  ```
+  (def data [[0 0 0] [0 1 1] [1 0 1] [1 1 0]])
+  (def tree
+    (let [min-split 2
+          min-leaf 1
+          max-features 2]
+      (make-classification-tree gini-impurity min-split min-leaf max-features)))
+  (def fit
+    (let [rate 1.0]
+      (-> (iterate #(add-bagging-estimator % tree decision-tree-fit decision-tree-predict)
+                    (make-bagging-classifier rate))
+          (nth 1001)
+          (bagging-ensemble-fit data))))
+  (bagging-ensemble-predict fit (map butlast data))
+  ;;=> (0 1 1 0)
+  ```"
   (:require [lambda-ml.core :refer :all]))
 
 (defn bagging-ensemble-fit
