@@ -39,6 +39,8 @@ Add the following dependency to your project:
 
 ## Examples
 
+Coming soon.
+
 ## License
 
-Copyright © 2015-2016
+Copyright © 2015-2017
