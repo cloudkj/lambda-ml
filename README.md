@@ -30,6 +30,7 @@ Add the following dependency to your project:
 
 * [DBSCAN](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.dbscan.html)
 * [K-means](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.k-means.html)
+* [Non-negative matrix factorization](https://cloudkj.github.io/lambda-ml/lambda-ml.factorization.html)
 
 ### Data Structures
 
