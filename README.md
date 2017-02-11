@@ -40,7 +40,8 @@ Add the following dependency to your project:
 
 ## Examples
 
-Coming soon.
+* [Predicting survival on the Titanic with logistic regression](http://viewer.gorilla-repl.org/view.html?source=github&user=cloudkj&repo=lambda-ml&path=src/lambda_ml/examples/kaggle/titanic.clj)
+* [Classifying handwritten digits with an artificial neural network](http://viewer.gorilla-repl.org/view.html?source=github&user=cloudkj&repo=lambda-ml&path=src/lambda_ml/examples/kaggle/digit_recognizer.clj)
 
 ## License
 
