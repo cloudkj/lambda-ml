@@ -12,8 +12,46 @@
   ```"
   (:require [lambda-ml.core :refer :all]
             [lambda-ml.data.binary-tree :as bt]
-            [lambda-ml.data.kd-tree :as kd]
-            [lambda-ml.data.priority-queue :as pq]))
+            [lambda-ml.data.kd-tree :as kd]))
+
+(defn make-item
+  [value priority]
+  (vector priority value))
+
+(defn item-priority
+  [item]
+  (nth item 0))
+
+(defn item-value
+  [item]
+  (nth item 1))
+
+(defn insert
+  [v value priority bound]
+  (let [full (>= (count v) bound)]
+    (cond
+      ;; Empty vector
+      (empty? v)
+      (vector (make-item value priority))
+      ;; Full vector and item priority is too high
+      (and full (>= priority (item-priority (peek v))))
+      v
+      :else
+      ;; Find position and insert item
+      (let [index (loop [lo 0
+                         hi (count v)]
+                    (if (>= lo hi)
+                      lo
+                      (let [mid (quot (+ lo hi) 2)]
+                        (if (< priority (item-priority (nth v mid)))
+                          (recur lo mid)
+                          (recur (+ mid 1) hi)))))
+            item (make-item value priority)
+            end (if full (dec (count v)) (count v))]
+        (apply conj
+               (subvec v 0 index)
+               item
+               (subvec v index end))))))
 
 (defn make-nearest-neighbor-search
   "Given a distance function f and a coll of items, each of which have an
@@ -29,7 +67,7 @@
         t (kd/make-tree dims items g)]
     (fn knn
       ([k query]
-       (knn k query t 0 (pq/make-queue)))
+       (knn k query t 0 (vector)))
       ([k query tree depth cand]
        (if (nil? tree)
          cand
@@ -41,13 +79,13 @@
                [near far] (if (<= (nth query-point dim) (nth node-point dim)) [left right] [right left])
                cand (->>
                      ;; Try to add current node to candidates
-                     (pq/insert cand node (f query-point node-point) k)
+                     (insert cand node (f query-point node-point) k)
                      ;; Explore near branch
                      (knn k query near (inc depth)))]
            ;; Optionally, explore far branch
            (if (or (< (count cand) k)
                    (< (f query-point node-point dim)
-                      (pq/item-priority (pq/get-tail cand))))
+                      (item-priority (peek cand))))
              (knn k query far (inc depth) cand)
              cand))))))))
 
@@ -67,7 +105,7 @@
       ;; values in last position in training data examples
       (->> (map #(conj (vec %) nil) x)
            (map #(lookup k %))
-           (map #(map (comp last pq/item-value) %))
+           (map #(map (comp last item-value) %))
            (map agg)))))
 
 (defn make-nearest-neighbors-classifier

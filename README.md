@@ -36,7 +36,6 @@ Add the following dependency to your project:
 
 * [Binary tree](https://cloudkj.github.io/lambda-ml/lambda-ml.data.binary-tree.html)
 * [K-d tree](https://cloudkj.github.io/lambda-ml/lambda-ml.data.kd-tree.html)
-* [Priority queue](https://cloudkj.github.io/lambda-ml/lambda-ml.data.priority-queue.html)
 
 ## Examples
 

@@ -2,22 +2,21 @@
   (:require [clojure.test :refer :all]
             [clojure.set :refer :all]
             [lambda-ml.nearest-neighbors :refer :all]
-            [lambda-ml.distance :as d]
-            [lambda-ml.data.priority-queue :as pq]))
+            [lambda-ml.distance :as d]))
 
 (deftest test-nearest-neighbor-search
   (let [search (make-nearest-neighbor-search d/euclidean [[2 3] [5 4] [9 6] [4 7] [8 1] [7 2]])]
-    (is (= [7 2] (pq/item-value (second (search 2 [8 1])))))
-    (is (= [5 4] (pq/item-value (second (search 2 [2 3])))))
-    (is (= [8 1] (pq/item-value (second (search 2 [7 2])))))
-    (is (= [5 4] (pq/item-value (second (search 2 [4 7])))))
+    (is (= [7 2] (item-value (second (search 2 [8 1])))))
+    (is (= [5 4] (item-value (second (search 2 [2 3])))))
+    (is (= [8 1] (item-value (second (search 2 [7 2])))))
+    (is (= [5 4] (item-value (second (search 2 [4 7])))))
     (is (= 3 (count (search 3 [2 3]))))
     (is (= 6 (count (search 6 [2 3]))))
     (is (= 6 (count (search 9 [2 3]))))))
 
 (deftest test-nearest-neighbor-search2
   (let [search (make-nearest-neighbor-search d/euclidean [[1 11] [2 5] [4 8] [6 4] [5 0] [7 9] [8 2]])]
-    (is (= [4 8] (pq/item-value (first (search 5 [3 9])))))))
+    (is (= [4 8] (item-value (first (search 5 [3 9])))))))
 
 (deftest test-nearest-neighbor-search3
   (let [points {[0.0   0.0]    1
@@ -79,11 +78,11 @@
                 [37.759859 -122.437134] :SanFrancisco}
         search (make-nearest-neighbor-search d/euclidean (keys points))]
     (is (= :SanJose
-           (-> (search 2 ((map-invert points) :SantaCruz)) second pq/item-value points)))
+           (-> (search 2 ((map-invert points) :SantaCruz)) second item-value points)))
     (is (= :SanFrancisco
-           (-> (search 2 ((map-invert points) :Berkeley)) second pq/item-value points)))
+           (-> (search 2 ((map-invert points) :Berkeley)) second item-value points)))
     (is (= :MountainView
-           (-> (search 2 ((map-invert points) :PaloAlto)) second pq/item-value points)))))
+           (-> (search 2 ((map-invert points) :PaloAlto)) second item-value points)))))
 
 (deftest test-nearest-neighbor-search-metadata
   (let [points [[:a 2 3]
@@ -93,10 +92,10 @@
                 [:e 8 1]
                 [:f 7 2]]
         search (make-nearest-neighbor-search d/euclidean rest points)]
-    (is (= :f (first (pq/item-value (second (search 2 [:e 8 1]))))))
-    (is (= :b (first (pq/item-value (second (search 2 [:a 2 3]))))))
-    (is (= :e (first (pq/item-value (second (search 2 [:f 7 2]))))))
-    (is (= :b (first (pq/item-value (second (search 2 [:d 4 7]))))))))
+    (is (= :f (first (item-value (second (search 2 [:e 8 1]))))))
+    (is (= :b (first (item-value (second (search 2 [:a 2 3]))))))
+    (is (= :e (first (item-value (second (search 2 [:f 7 2]))))))
+    (is (= :b (first (item-value (second (search 2 [:d 4 7]))))))))
 
 (deftest test-nearest-neighbors-classifier
   (let [data [[25 40000  :no]
