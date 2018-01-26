@@ -28,10 +28,6 @@
   [coll]
   (first (apply max-key second (frequencies coll))))
 
-(defn sigmoid
-  [z]
-  (/ 1 (+ 1 (expt Math/E (- z)))))
-
 (defn random-partition
   "Returns n partitions of elements randomly selected from coll."
   [n coll]
@@ -66,3 +62,27 @@
            (sample-without-replacement (subvec (assoc coll index (first coll)) 1)
                                        (dec n)
                                        (conj s (nth coll index)))))))
+
+;; Common functions
+
+(defn relu
+  [z]
+  (max 0 z))
+
+(defn relu'
+  [z]
+  (if (> z 0) 1 0))
+
+(defn sigmoid
+  [z]
+  (/ 1 (+ 1 (expt Math/E (- z)))))
+
+(defn sigmoid'
+  [z]
+  (* z (- 1 z)))
+
+(defn derivative
+  [f]
+  (cond
+    (= f relu) relu'
+    (= f sigmoid) sigmoid'))
