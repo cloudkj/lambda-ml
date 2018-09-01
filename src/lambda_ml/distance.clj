@@ -4,7 +4,7 @@
 
 (defn cosine
   "Returns the cosine distance between two points by subtracting the cosine
-  similarity from one. Assumes that both points are represented as sequences of
+  similarity from 1. Assumes that both points are represented as sequences of
   the same dimension. Given a dimension d, returns the distance between two
   points as if the values for all other dimensions were set to zero."
   ([x y]
@@ -42,3 +42,14 @@
   ([x y d]
    (let [other (mod (inc d) 2)]
    (haversine (assoc x other 0) (assoc y other 0)))))
+
+(defn jaccard
+  "Returns the Jaccard distance between two points by subtracting the Jaccard
+  similarity coefficient from 1. Assumes that both points are represented as
+  sequences of the same dimension. Given a dimension d, returns the distance
+  between two points as if the values for all other dimensions were set to zero."
+  ([x y]
+   (- 1 (/ (reduce + (map min x y))
+           (reduce + (map max x y)))))
+  ([x y d]
+   (jaccard (vector (nth x d)) (vector (nth y d)))))
