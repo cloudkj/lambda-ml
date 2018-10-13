@@ -88,7 +88,7 @@
                    "RM" {"BA" 412 "FI" 268 "MI" 564 "NA" 219 "RM" 0   "TO" 669}
                    "TO" {"BA" 996 "FI" 400 "MI" 138 "NA" 869 "RM" 669 "TO" 0}}
         f (fn [a b] (get-in distances [a b]))
-        merges (agglomerative-clustering f (keys distances))]
+        merges (agglomerative-clustering single-link f (keys distances))]
     (is (= [2 5] (nth merges 0)))
     (is (= [3 4] (nth merges 1)))
     (is (= [0 3] (nth merges 2)))
@@ -103,7 +103,7 @@
                 [1 1 1 0 1 0 1 1 1 0]
                 [0 1 0 1 1 0 0 0 0 1]
                 [0 1 1 0 1 1 0 1 1 0]]
-        merges (agglomerative-clustering d/jaccard points)]
+        merges (agglomerative-clustering single-link d/jaccard points)]
     (is (= [1 5] (nth merges 0)))
     (is (= [0 4] (nth merges 1)))
     (is (= [2 6] (nth merges 2)))
@@ -119,7 +119,7 @@
                    "E" {"A" 4.24 "B" 3.54 "C" 1.41 "D" 1.00 "E" 0.00 "F" 1.12}
                    "F" {"A" 3.20 "B" 2.50 "C" 2.50 "D" 0.50 "E" 1.12 "F" 0.00}}
         f (fn [a b] (get-in distances [a b]))
-        merges (agglomerative-clustering f (keys distances))]
+        merges (agglomerative-clustering single-link f (keys distances))]
     (is (= [3 5] (nth merges 0)))
     (is (= [0 1] (nth merges 1)))
     (is (= [3 4] (nth merges 2)))
