@@ -29,16 +29,18 @@ Add the following dependency to your project:
 ### Unsupervised Learning Algorithms
 
 * [DBSCAN](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.dbscan.html)
+* [Hierarchical agglomerative clustering](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.hierarchical.html)
 * [K-means](https://cloudkj.github.io/lambda-ml/lambda-ml.clustering.k-means.html)
 * [Non-negative matrix factorization](https://cloudkj.github.io/lambda-ml/lambda-ml.factorization.html)
 
 ## Examples
 
-* [Predicting survival on the Titanic with logistic regression](http://viewer.gorilla-repl.org/view.html?source=github&user=cloudkj&repo=lambda-ml&path=src/lambda_ml/examples/kaggle/titanic.clj)
 * [Classifying handwritten digits with an artificial neural network](http://viewer.gorilla-repl.org/view.html?source=github&user=cloudkj&repo=lambda-ml&path=src/lambda_ml/examples/kaggle/digit_recognizer.clj)
-* [Simple DBSCAN example](http://viewer.gorilla-repl.org/view.html?source=github&user=cloudkj&repo=lambda-ml&path=src/lambda_ml/examples/worksheets/dbscan.clj)
-* [Simple decision tree example](http://viewer.gorilla-repl.org/view.html?source=github&user=cloudkj&repo=lambda-ml&path=src/lambda_ml/examples/worksheets/decision_tree.clj)
-* [Simple k-means example](http://viewer.gorilla-repl.org/view.html?source=github&user=cloudkj&repo=lambda-ml&path=src/lambda_ml/examples/worksheets/k_means.clj)
+* [DBSCAN example](http://viewer.gorilla-repl.org/view.html?source=github&user=cloudkj&repo=lambda-ml&path=src/lambda_ml/examples/worksheets/dbscan.clj)
+* [Decision tree example](http://viewer.gorilla-repl.org/view.html?source=github&user=cloudkj&repo=lambda-ml&path=src/lambda_ml/examples/worksheets/decision_tree.clj)
+* [Hierarchical agglomerative clustering example](http://viewer.gorilla-repl.org/view.html?source=github&user=cloudkj&repo=lambda-ml&path=src/lambda_ml/examples/worksheets/hierarchical.clj)
+* [K-means example](http://viewer.gorilla-repl.org/view.html?source=github&user=cloudkj&repo=lambda-ml&path=src/lambda_ml/examples/worksheets/k_means.clj)
+* [Predicting survival on the Titanic with logistic regression](http://viewer.gorilla-repl.org/view.html?source=github&user=cloudkj&repo=lambda-ml&path=src/lambda_ml/examples/kaggle/titanic.clj)
 
 ## License
 
