@@ -1,7 +1,5 @@
 (ns lambda-ml.clustering.hierarchical-test
   (:require [clojure.test :refer :all]
-            ;; TODO: remove
-            [clojure.pprint :refer :all]
             [lambda-ml.clustering.hierarchical :refer :all]
             [lambda-ml.distance :as d]))
 
