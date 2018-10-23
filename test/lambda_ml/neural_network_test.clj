@@ -31,6 +31,20 @@
     (is (< (Math/abs (- 0.53353777 (nth output 0))) 1E-6))
     (is (< (Math/abs (- 0.62727869 (nth output 1))) 1E-6))))
 
+(deftest test-back-propagate
+  (let [weights [[[0.35 0.15 0.20]
+                  [0.35 0.25 0.30]]
+                 [[0.60 0.40 0.45]
+                  [0.60 0.50 0.55]]]
+        fs' [sigmoid' sigmoid']
+        y [0.01 0.99]
+        activations [[0.593269920 0.596884378] [0.751365070 0.772928465]]
+        [errors1 errors2] (back-propagate y weights fs' activations quadratic-output-error)]
+    (is (< (Math/abs (- 0.00877136 (first errors1)))   1E-6))
+    (is (< (Math/abs (- 0.00995425 (second errors1)))  1E-6))
+    (is (< (Math/abs (- 0.13849856 (first errors2)))   1E-6))
+    (is (< (Math/abs (- -0.03809824 (second errors2))) 1E-6))))
+
 (deftest test-gradient-descent-step
   (let [weights [[[0.35 0.15 0.20]
                   [0.35 0.25 0.30]]
