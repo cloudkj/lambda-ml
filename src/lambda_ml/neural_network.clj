@@ -133,8 +133,9 @@
                                       output-error))))))
 
 (defn init-parameters
-  [layers]
-  (let [r (java.util.Random.)
+  [model]
+  (let [{layers :layers seed :seed} model
+        r (if seed (java.util.Random. seed) (java.util.Random.))
         rand (fn [] (.nextGaussian r))]
     (->> (for [i (range (dec (count layers)))]
            (let [ni (inc (nth layers i))    ;; number of nodes at layer i (+ bias node)
@@ -174,9 +175,9 @@
   ([model data]
    (neural-network-fit model (map (comp vec butlast) data) (map (comp vec last) data)))
   ([model x y]
-   (let [{layers :layers theta :parameters} model
+   (let [{theta :parameters} model
          model (-> model
-                   (assoc :parameters (or theta (init-parameters layers))))]
+                   (assoc :parameters (or theta (init-parameters model))))]
      (assoc model :parameters (gradient-descent model x y)))))
 
 (defn neural-network-predict
@@ -209,11 +210,14 @@
   ([alpha lambda]
    (make-neural-network alpha lambda cross-entropy-cost))
   ([alpha lambda cost]
+   (make-neural-network alpha lambda cross-entropy-cost nil))
+  ([alpha lambda cost seed]
    {:alpha alpha
     :lambda lambda
     :layers []
     :activation-fns []
     :cost cost
+    :seed seed
     :output-error (cond
                     (= cost cross-entropy-cost) cross-entropy-output-error
                     (= cost quadratic-cost)     quadratic-output-error)}))

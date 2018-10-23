@@ -59,7 +59,7 @@
               [0 1 [1]]
               [1 0 [1]]
               [1 1 [0]]]
-        model (-> (make-neural-network 0.5 0.0)
+        model (-> (make-neural-network 0.5 0.0 cross-entropy-cost 54321)
                   (add-neural-network-layer 2 sigmoid)
                   (add-neural-network-layer 3 sigmoid)
                   (add-neural-network-layer 1 sigmoid))
