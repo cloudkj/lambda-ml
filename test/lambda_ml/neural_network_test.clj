@@ -45,6 +45,25 @@
     (is (< (Math/abs (- 0.13849856 (first errors2)))   1E-6))
     (is (< (Math/abs (- -0.03809824 (second errors2))) 1E-6))))
 
+(deftest test-compute-gradients
+  (let [x [0.05 0.1]
+        activations [[0.593269920 0.596884378] [0.751365070 0.772928465]]
+        errors [[0.00877136 0.00995425] [0.13849856 -0.03809824]]
+        g (compute-gradients x activations errors)]
+    ;; TODO: add assertions
+    (println g)))
+
+(deftest test-regularize
+  (let [weights [[[0.35 0.15 0.20]
+                  [0.35 0.25 0.30]]
+                 [[0.60 0.40 0.45]
+                  [0.60 0.50 0.55]]]
+        alpha 0.5
+        lambda 0.1
+        weights (regularize weights alpha lambda)]
+    ;; TODO: add assertions
+    (println weights)))
+
 (deftest test-gradient-descent-step
   (let [weights [[[0.35 0.15 0.20]
                   [0.35 0.25 0.30]]

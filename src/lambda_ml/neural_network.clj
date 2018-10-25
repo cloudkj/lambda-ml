@@ -95,9 +95,17 @@
         (range)
         theta))
 
+(defn regularize
+  [theta alpha lambda]
+  (map (fn [w]
+         (-> (m/mul alpha lambda w)
+             (m/set-column 0 (m/matrix (repeat (m/row-count w) 0)))))
+       theta))
+
 (defn gradient-descent-step
   "Performs a single gradient step on the input and target values of a single
   example x and label y, and returns the updated weights."
+  ;; TODO: pass in `model` object here
   [x y theta fns alpha lambda cost output-error]
   (let [activations (feed-forward x theta fns)
         errors (back-propagate y theta (map c/derivative fns) activations output-error)
@@ -116,21 +124,10 @@
   [model x y]
   (let [{alpha :alpha lambda :lambda theta :parameters cost :cost
          fns :activation-fns output-error :output-error} model]
-    (loop [inputs x
-           targets y
-           weights theta]
-      (if (and (empty? inputs) (empty? targets))
-        weights
-        (recur (rest inputs)
-               (rest targets)
-               (gradient-descent-step (first inputs)
-                                      (first targets)
-                                      weights
-                                      fns
-                                      alpha
-                                      lambda
-                                      cost
-                                      output-error))))))
+    (->> (map vector x y)
+         (reduce (fn [weights [xi yi]]
+                   (gradient-descent-step xi yi weights fns alpha lambda cost output-error))
+                 theta))))
 
 (defn init-parameters
   [model]
