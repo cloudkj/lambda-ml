@@ -69,15 +69,14 @@
                   [0.35 0.25 0.30]]
                  [[0.60 0.40 0.45]
                   [0.60 0.50 0.55]]]
+        model (-> (make-neural-network 0.5 0 quadratic-cost)
+                  (add-neural-network-layer 2 sigmoid)
+                  (add-neural-network-layer 2 sigmoid)
+                  (add-neural-network-layer 2 sigmoid))
         fs [sigmoid sigmoid]
         x [0.05 0.1]
         y [0.01 0.99]
-        alpha 0.5
-        lambda 0
-        [w0 w1] (gradient-descent-step x y weights fs
-                                       alpha lambda
-                                       quadratic-cost
-                                       quadratic-output-error)]
+        [w0 w1] (gradient-descent-step model x y weights)]
     (is (< (Math/abs (- 0.149780716 (nth (nth w0 0) 1))) 1E-6))
     (is (< (Math/abs (- 0.19956143  (nth (nth w0 0) 2))) 1E-6))
     (is (< (Math/abs (- 0.24975114  (nth (nth w0 1) 1))) 1E-6))
@@ -86,6 +85,15 @@
     (is (< (Math/abs (- 0.408666186 (nth (nth w1 0) 2))) 1E-6))
     (is (< (Math/abs (- 0.51130127  (nth (nth w1 1) 1))) 1E-6))
     (is (< (Math/abs (- 0.561370121 (nth (nth w1 1) 2))) 1E-6))))
+
+(deftest test-init-parameters
+  (let [model {:layers [2 3 1]}
+        weights (init-parameters model)]
+    ;; TODO: add assertions on dimensions of weights
+    (println weights)
+    (doseq [m weights]
+      (println (clojure.core.matrix/shape m))
+      (clojure.core.matrix/pm m))))
 
 (deftest test-neural-network
   (let [data [[0 0 [0]]

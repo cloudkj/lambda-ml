@@ -105,9 +105,10 @@
 (defn gradient-descent-step
   "Performs a single gradient step on the input and target values of a single
   example x and label y, and returns the updated weights."
-  ;; TODO: pass in `model` object here
-  [x y theta fns alpha lambda cost output-error]
-  (let [activations (feed-forward x theta fns)
+  [model x y theta]
+  (let [{fns :activation-fns alpha :alpha lambda :lambda
+         cost :cost output-error :output-error} model
+        activations (feed-forward x theta fns)
         errors (back-propagate y theta (map c/derivative fns) activations output-error)
         gradients (compute-gradients x activations errors)
         regularization (map (fn [w]
@@ -122,12 +123,9 @@
   "Performs gradient descent on input and target values of all examples x and
   y, and returns the updated weights."
   [model x y]
-  (let [{alpha :alpha lambda :lambda theta :parameters cost :cost
-         fns :activation-fns output-error :output-error} model]
-    (->> (map vector x y)
-         (reduce (fn [weights [xi yi]]
-                   (gradient-descent-step xi yi weights fns alpha lambda cost output-error))
-                 theta))))
+  (reduce (fn [weights [xi yi]] (gradient-descent-step model xi yi weights))
+          (:parameters model)
+          (map vector x y)))
 
 (defn init-parameters
   [model]
@@ -207,7 +205,7 @@
   ([alpha lambda]
    (make-neural-network alpha lambda cross-entropy-cost))
   ([alpha lambda cost]
-   (make-neural-network alpha lambda cross-entropy-cost nil))
+   (make-neural-network alpha lambda cost nil))
   ([alpha lambda cost seed]
    {:alpha alpha
     :lambda lambda
