@@ -96,6 +96,7 @@
         theta))
 
 (defn regularize
+  "Returns regularized weights."
   [theta alpha lambda]
   (map (fn [w]
          (-> (m/mul alpha lambda w)
@@ -111,10 +112,7 @@
         activations (feed-forward x theta fns)
         errors (back-propagate y theta (map c/derivative fns) activations output-error)
         gradients (compute-gradients x activations errors)
-        regularization (map (fn [w]
-                              (-> (m/mul alpha lambda w)
-                                  (m/set-column 0 (m/matrix (repeat (m/row-count w) 0)))))
-                            theta)]
+        regularization (regularize theta alpha lambda)]
     ;; Numeric gradient checking
     ;;(println (map (comp #(/ (m/esum %) (m/ecount %)) m/abs m/sub) gradients (numeric-gradients x y theta fns cost)))
     (mapv m/sub theta (map #(m/mul % alpha) gradients) regularization)))
